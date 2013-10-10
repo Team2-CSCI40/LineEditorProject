@@ -1,3 +1,11 @@
+// -- GROUP 2 -- 
+// Nicholas Roberts
+// Cisty Vue
+// Levi Ruiz
+// Atef Alrwashdeh
+// Phoebe Ruggeberg
+// Alex Yang
+
 #include <iostream>
 using namespace std;
 
@@ -12,145 +20,92 @@ void Delete();
 void Replace();
 void Move();
 
+////////////////////////////////////////////////<IDEAS>
+// (Feel free to add to this field)
+//
+// Post to Facebook function
+// fun little animation things
+// 
+//  
+///////////////////////////////////////////////</IDEAS>
+
 // I suspect that some of the functions will have to be char, rather than void...
 // Such as a 'Save?' option. 
 
+
 int main() // Main program
 	{
-		
-		
+				
 		char input;
 		input=' '; // Initializes variable as a space, uses initialization to welcome the user in switch. 
 		
-		
-		
 		while(input!='Q') // Main event loop. 
 			{
-				
-				
 				switch(input)
 				{
 					case ' ': 
 						cout<<"Welcome. " // Uses variable initialization, as described above. 
 						<<endl;
-						
-						cout<<"Command?"
-						<<endl;		
-						cin>>input;
-						cin.ignore(1000,'\n');
-						input=toupper(input);
-						
 						break;
+						
 					case 'S':
 						Substitute();
-						
-						cout<<"Command?"
-						<<endl;		
-						cin>>input;
-						cin.ignore(1000,'\n');
-						input=toupper(input);
-						
 						break;
+						
 					case 'T':
 						Type();
-					
-						cout<<"Command?"
-						<<endl;		
-						cin>>input;
-						cin.ignore(1000,'\n');
-						input=toupper(input);	
+						break;
 						
-						break;
 					case 'C':
-						Copy();
-					
-						cout<<"Command?"
-						<<endl;		
-						cin>>input;
-						cin.ignore(1000,'\n');
-						input=toupper(input);
-							
+						Copy();	
 						break;
+						
 					case 'P':
 						Paste();
-					
-						cout<<"Command?"
-						<<endl;		
-						cin>>input;
-						cin.ignore(1000,'\n');
-						input=toupper(input);	
-						
 						break;
+						
 					case 'L':
 						Locate();
-					
-						cout<<"Command?"
-						<<endl;		
-						cin>>input;
-						cin.ignore(1000,'\n');
-						input=toupper(input);
-							
 						break;
+						
 					case 'I':
 						Insert();
-					
-						cout<<"Command?"
-						<<endl;		
-						cin>>input;
-						cin.ignore(1000,'\n');
-						input=toupper(input);	
-						
 						break;
+						
 					case 'D':
 						Delete();
-					
-						cout<<"Command?"
-						<<endl;		
-						cin>>input;
-						cin.ignore(1000,'\n');
-						input=toupper(input);
-						
 						break;
+						
 					case 'R':
 						Replace();
-					
-						cout<<"Command?"
-						<<endl;		
-						cin>>input;
-						cin.ignore(1000,'\n');
-						input=toupper(input);
-							
 						break;
-					case 'M':
-						Move();
-					
-						cout<<"Command?"
-						<<endl;		
-						cin>>input;
-						cin.ignore(1000,'\n');
-						input=toupper(input);	
 						
+					case 'M':
+						Move();	
 						break;
 					
 					default:
 						cout<<"I don't know what that means. " 
+							<<endl
+							<<"Please enter something more reasonable. "
+							<<endl;
 						// Perhaps we can later add something that 
-						// repeats what the user typed in, as a string. 
-						<<endl
-						<<"Please enter something more reasonable. "
-						<<endl;
-						
-						cout<<"Command?"
-						<<endl;		
-						cin>>input;
-						cin.ignore(1000,'\n');
-						input=toupper(input);
-						
+						// IDEALLY it repeats what the user typed in, as a string. Will add later. 
 						break;
+						
 				}	
+				cout<<"Command?"
+					<<endl;		
+				cin>>input;
+				cin.ignore(1000,'\n');
+				input=toupper(input);
 			}
 		return 0;
 	}
+	
+/////////////////////// ANYTHING BELOW THIS FIELD IS EDITABLE WITHOUT PERMISSION ////////////////////////	
+	
+	
 	
 void Substitute()
 	{
@@ -197,17 +152,3 @@ void Move()
 		cout<<"'Move' has been called. "
 		<<endl;
 	}
-
-/*	
-char I_O(char input) // I was hoping to have the basic input/output in a function, 
-		     // but it didn't work very nicely. 
-	{
-		cout<<"Command?"
-		<<endl;		
-		cin>>input;
-		cin.ignore(1000,'\n');
-		input=toupper(input);
-		return input;
-	}
-*/
-	
