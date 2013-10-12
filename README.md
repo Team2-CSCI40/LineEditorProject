@@ -1,5 +1,8 @@
 LineEditorProject
 =================
 
-Collaborative coursework from Fresno City College's CSCI 40 class. 
+Fresno City College: 
+  Fall 2013: 
+    CSCI 40: 
+      Group 2 
 -----------------
