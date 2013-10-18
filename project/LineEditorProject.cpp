@@ -23,6 +23,8 @@ void Delete();
 void Replace();
 void Move(string[]); // Phoebe/Alex
 void Quit(string[]);
+void Save(string[]); 
+void Separate(string[]);
 
 
 // make quit function, and divide function. 
@@ -37,13 +39,11 @@ void Quit(string[]);
 //  
 ///////////////////////////////////////////////</IDEAS>
 
-// I suspect that some of the functions will have to be char, rather than void...
-// Such as a 'Save?' option. 
 
 
 int main() // Main program
 	{
-		string mainFile[99];
+		string txtFile[99];
 		char input;
 		input=' '; // Initializes variable as a space, uses initialization to welcome the user in switch. 
 		
@@ -61,7 +61,7 @@ int main() // Main program
 						break;
 						
 					case 'T':
-						Type(mainFile);
+						Type(txtFile);
 						break;
 						
 					case 'C':
@@ -77,7 +77,7 @@ int main() // Main program
 						break;
 						
 					case 'I':
-						Insert(mainFile);
+						Insert(txtFile);
 						break;
 						
 					case 'D':
@@ -89,8 +89,10 @@ int main() // Main program
 						break;
 						
 					case 'M':
-						Move(mainFile);	
+						Move(txtFile);	
 						break;
+						
+					// add Save case, but not just with 'S', it will conflict with Substitute. 
 					
 					default:
 						cout<<"I don't know what that means. " 
@@ -111,6 +113,7 @@ int main() // Main program
 				
 			}
 			
+			Quit(txtFile); // calls quit function, Y or N to save. 
 			
 		return 0;
 	}
@@ -124,7 +127,7 @@ void Substitute()
 		cout<<"'Substitute' has been called. "
 		<<endl;
 	}
-void Type(string edit[])
+void Type(string txtEdit[])
 	{
 		cout<<"'Type' has been called. "
 		<<endl;
@@ -144,7 +147,7 @@ void Locate()
 		cout<<"'Locate' has been called. "
 		<<endl;
 	}
-void Insert(string edit[])
+void Insert(string txtEdit[])
 	{
 		cout<<"'Insert' has been called. "
 		<<endl;
@@ -159,9 +162,23 @@ void Replace()
 		cout<<"'Replace' has been called. "
 		<<endl;
 	}
-void Move(string edit[])
+void Move(string txtEdit[])
 	{
 		cout<<"'Move' has been called. "
 		<<endl;
 	}
+void Quit(string txtEdit[])
+	{
+		cout<<"'Quit' has been called. "
+		<<endl;
+		Save(txtEdit);
+	}
+void Save(string txtEdit[]) // a separate save function so that users can save without quitting. 
+	{
+		cout<<"'Save' has been called. "
+		<<endl;
+	}
+void Separate(string txtEdit[])
+	{
 
+	}
