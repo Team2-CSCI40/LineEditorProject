@@ -24,14 +24,12 @@ void Replace();
 void Move(string[]); // Phoebe/Alex
 void Quit(string[]);
 void Save(string[]); 
-void Separate(string[]);
-
-
-// make quit function, and divide function. 
+void Separate(string[]); // not sure of this one yet, will try first... 
 
 
 ////////////////////////////////////////////////<IDEAS>
 // (Feel free to add to this field)
+//
 //
 // Post to Facebook function
 // fun little animation things
@@ -44,12 +42,20 @@ void Separate(string[]);
 int main() // Main program
 	{
 		string txtFile[99];
-		char input;
-		input=' '; // Initializes variable as a space, uses initialization to welcome the user in switch. 
 		
-		while(input!='Q') // Main event loop. //quit
+		string inputString;
+		char inputChar;
+		char inputCharSecond;
+		
+		
+		
+		
+		
+		inputChar=' '; // Initializes variable as a space, uses initialization to welcome the user in switch. 
+		
+		while(inputChar!='Q') // Main event loop. //quit
 			{
-				switch(input)
+				switch(inputChar)
 				{
 					case ' ': 
 						cout<<"Welcome. " // Uses variable initialization, as described above. 
@@ -57,7 +63,12 @@ int main() // Main program
 						break;
 						
 					case 'S':
-						Substitute();
+						inputCharSecond=inputString.at(1);
+						inputCharSecond=toupper(inputCharSecond);
+						if(inputCharSecond=='U')
+							Substitute();
+						if(inputCharSecond=='A')
+							Save(txtFile);
 						break;
 						
 					case 'T':
@@ -95,20 +106,27 @@ int main() // Main program
 					// add Save case, but not just with 'S', it will conflict with Substitute. 
 					
 					default:
-						cout<<"I don't know what that means. " 
+						cout<<"'"<<inputString<<"'"
+							<<" is not a valid command. "
 							<<endl
-							<<"Please enter something more reasonable. "
+							<<"Please enter a valid command. "
 							<<endl;
 						// Perhaps we can later add something that 
 						// IDEALLY it repeats what the user typed in, as a string. Will add later. 
 						break;
 						
 				}	
+				
+				
+				
+				
 				cout<<"Command?"
 					<<endl;		
-				cin>>input;
+				cin>>inputString;
 				cin.ignore(1000,'\n');
-				input=toupper(input);
+				
+				inputChar=inputString.at(0);
+				inputChar=toupper(inputChar);
 				
 				
 			}
@@ -118,8 +136,18 @@ int main() // Main program
 		return 0;
 	}
 	
-/////////////////////// ANYTHING BELOW THIS FIELD IS EDITABLE WITHOUT PERMISSION ////////////////////////	
 	
+	
+	
+	/////////////////
+	//-----Functions
+	//
+	//
+	//
+	////////
+	//////
+	////
+	//
 	
 	
 void Substitute()
@@ -175,7 +203,7 @@ void Quit(string txtEdit[])
 	}
 void Save(string txtEdit[]) // a separate save function so that users can save without quitting. 
 	{
-		cout<<"'Save' has been called. "
+		cout<<"'Save' has been called "
 		<<endl;
 	}
 void Separate(string txtEdit[])
