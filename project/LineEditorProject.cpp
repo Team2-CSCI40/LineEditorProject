@@ -20,7 +20,7 @@ void Insert(string[], string); // ASSIGNED TO Atef/Levi
 void Delete();
 void Replace();
 void Move(string[], string); // ASSIGNED TO Phoebe/Alex
-void Quit(string[]);
+void Quit();
 void Save(string[]); 
 
 
@@ -29,7 +29,7 @@ void Save(string[]);
 // (Feel free to add to this field)
 //
 //
-// Post to Facebook function
+// Post to Facebook function (can probably be done with PHP)
 // fun little animation things
 // 
 //  
@@ -123,7 +123,7 @@ int main() // Main program
 				
 			}
 			
-			Quit(txtFile); // calls quit function, Y or N to save. 
+			Quit(); // calls quit function, Y or N to save. 
 			
 		return 0;
 	}
@@ -187,7 +187,7 @@ void Move(string txtEdit[], string userInput)
 		cout<<"'Move' has been called. "
 		<<endl;
 	}
-void Quit(string txtEdit[])
+void Quit()
 	{
 		char yesNo; 
 		
