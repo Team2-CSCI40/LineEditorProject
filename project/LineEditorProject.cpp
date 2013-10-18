@@ -5,6 +5,7 @@
 // Atef Alrwashdeh
 // Phoebe Ruggeberg
 // Alex Yang
+// Main program for line editor project
 
 #include <iostream>
 using namespace std;
