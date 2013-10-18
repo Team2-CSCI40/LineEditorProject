@@ -14,15 +14,19 @@ using namespace std;
 
 char I_O(char);
 void Substitute();
-void Type(string[]);
+void Type(string[]); // Cisty
 void Copy();
 void Paste();
 void Locate();
-void Insert(string[]);
+void Insert(string[]); // Atef/Levi
 void Delete();
 void Replace();
-void Move(string[]);
+void Move(string[]); // Phoebe/Alex
 void Quit(string[]);
+
+
+// make quit function, and divide function. 
+
 
 ////////////////////////////////////////////////<IDEAS>
 // (Feel free to add to this field)
@@ -57,7 +61,7 @@ int main() // Main program
 						break;
 						
 					case 'T':
-						Type(string[]);
+						Type(mainFile);
 						break;
 						
 					case 'C':
@@ -73,7 +77,7 @@ int main() // Main program
 						break;
 						
 					case 'I':
-						Insert(string[]);
+						Insert(mainFile);
 						break;
 						
 					case 'D':
@@ -85,7 +89,7 @@ int main() // Main program
 						break;
 						
 					case 'M':
-						Move(string[]);	
+						Move(mainFile);	
 						break;
 					
 					default:
@@ -103,7 +107,11 @@ int main() // Main program
 				cin>>input;
 				cin.ignore(1000,'\n');
 				input=toupper(input);
+				
+				
 			}
+			
+			
 		return 0;
 	}
 	
@@ -116,7 +124,7 @@ void Substitute()
 		cout<<"'Substitute' has been called. "
 		<<endl;
 	}
-void Type()
+void Type(string edit[])
 	{
 		cout<<"'Type' has been called. "
 		<<endl;
@@ -136,7 +144,7 @@ void Locate()
 		cout<<"'Locate' has been called. "
 		<<endl;
 	}
-void Insert()
+void Insert(string edit[])
 	{
 		cout<<"'Insert' has been called. "
 		<<endl;
@@ -151,8 +159,9 @@ void Replace()
 		cout<<"'Replace' has been called. "
 		<<endl;
 	}
-void Move()
+void Move(string edit[])
 	{
 		cout<<"'Move' has been called. "
 		<<endl;
 	}
+
