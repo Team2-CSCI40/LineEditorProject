@@ -9,18 +9,20 @@
 // This is a test
 
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 char I_O(char);
 void Substitute();
-void Type();
+void Type(string[]);
 void Copy();
 void Paste();
 void Locate();
-void Insert();
+void Insert(string[]);
 void Delete();
 void Replace();
-void Move();
+void Move(string[]);
+void Quit(string[]);
 
 ////////////////////////////////////////////////<IDEAS>
 // (Feel free to add to this field)
@@ -37,11 +39,11 @@ void Move();
 
 int main() // Main program
 	{
-				
+		string mainFile[99];
 		char input;
 		input=' '; // Initializes variable as a space, uses initialization to welcome the user in switch. 
 		
-		while(input!='Q') // Main event loop. 
+		while(input!='Q') // Main event loop. //quit
 			{
 				switch(input)
 				{
@@ -55,7 +57,7 @@ int main() // Main program
 						break;
 						
 					case 'T':
-						Type();
+						Type(string[]);
 						break;
 						
 					case 'C':
@@ -71,7 +73,7 @@ int main() // Main program
 						break;
 						
 					case 'I':
-						Insert();
+						Insert(string[]);
 						break;
 						
 					case 'D':
@@ -83,7 +85,7 @@ int main() // Main program
 						break;
 						
 					case 'M':
-						Move();	
+						Move(string[]);	
 						break;
 					
 					default:
