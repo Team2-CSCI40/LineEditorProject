@@ -6,6 +6,7 @@
 // Phoebe Ruggeberg
 // Alex Yang
 // Main program for line editor project
+// This is a test
 
 #include <iostream>
 using namespace std;
