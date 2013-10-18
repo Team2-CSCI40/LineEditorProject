@@ -1,12 +1,10 @@
-// -- GROUP 2 -- 
+// -- GROUP 2 -- Line Editor -- //
 // Nicholas Roberts
 // Cisty Vue
 // Levi Ruiz
 // Atef Alrwashdeh
 // Phoebe Ruggeberg
 // Alex Yang
-// Main program for line editor project
-// This is a test
 
 #include <iostream>
 #include <fstream>
@@ -14,17 +12,17 @@ using namespace std;
 
 char I_O(char);
 void Substitute();
-void Type(string[]); // Cisty
+void Type(string[], string); // ASSIGNED TO Cisty
 void Copy();
 void Paste();
 void Locate();
-void Insert(string[]); // Atef/Levi
+void Insert(string[], string); // ASSIGNED TO Atef/Levi
 void Delete();
 void Replace();
-void Move(string[]); // Phoebe/Alex
+void Move(string[], string); // ASSIGNED TO Phoebe/Alex
 void Quit(string[]);
 void Save(string[]); 
-void Separate(string[]); // not sure of this one yet, will try first... 
+
 
 
 ////////////////////////////////////////////////<IDEAS>
@@ -47,23 +45,21 @@ int main() // Main program
 		char inputChar;
 		char inputCharSecond;
 		
-		
-		
-		
-		
-		inputChar=' '; // Initializes variable as a space, uses initialization to welcome the user in switch. 
+		inputChar=' '; // Initializes variable as a space, 
+			// uses initialization to welcome the user in switch. 
 		
 		while(inputChar!='Q') // Main event loop. //quit
 			{
 				switch(inputChar)
 				{
 					case ' ': 
-						cout<<"Welcome. " // Uses variable initialization, as described above. 
+						cout<<"Welcome. " // Uses variable initialization, 
+							// as described above. 
 						<<endl;
 						break;
 						
-					case 'S':
-						inputCharSecond=inputString.at(1);
+					case 'S': // if a case has two possible functions
+						inputCharSecond=inputString.at(1); // look at the second letter. 
 						inputCharSecond=toupper(inputCharSecond);
 						if(inputCharSecond=='U')
 							Substitute();
@@ -72,7 +68,7 @@ int main() // Main program
 						break;
 						
 					case 'T':
-						Type(txtFile);
+						Type(txtFile, inputString);
 						break;
 						
 					case 'C':
@@ -88,7 +84,7 @@ int main() // Main program
 						break;
 						
 					case 'I':
-						Insert(txtFile);
+						Insert(txtFile, inputString);
 						break;
 						
 					case 'D':
@@ -100,27 +96,23 @@ int main() // Main program
 						break;
 						
 					case 'M':
-						Move(txtFile);	
+						Move(txtFile, inputString);	
 						break;
-						
-					// add Save case, but not just with 'S', it will conflict with Substitute. 
 					
-					default:
+					default: // maybe we can add something that 
+						// redirects the user to the 
+						// project's wiki page, opening their browser... 
 						cout<<"'"<<inputString<<"'"
 							<<" is not a valid command. "
 							<<endl
 							<<"Please enter a valid command. "
 							<<endl;
-						// Perhaps we can later add something that 
-						// IDEALLY it repeats what the user typed in, as a string. Will add later. 
 						break;
 						
 				}	
 				
 				
-				
-				
-				cout<<"Command?"
+				cout<<"Command? "
 					<<endl;		
 				cin>>inputString;
 				cin.ignore(1000,'\n');
@@ -155,7 +147,7 @@ void Substitute()
 		cout<<"'Substitute' has been called. "
 		<<endl;
 	}
-void Type(string txtEdit[])
+void Type(string txtEdit[], string userInput)
 	{
 		cout<<"'Type' has been called. "
 		<<endl;
@@ -175,7 +167,7 @@ void Locate()
 		cout<<"'Locate' has been called. "
 		<<endl;
 	}
-void Insert(string txtEdit[])
+void Insert(string txtEdit[], string userInput)
 	{
 		cout<<"'Insert' has been called. "
 		<<endl;
@@ -190,23 +182,33 @@ void Replace()
 		cout<<"'Replace' has been called. "
 		<<endl;
 	}
-void Move(string txtEdit[])
+void Move(string txtEdit[], string userInput)
 	{
 		cout<<"'Move' has been called. "
 		<<endl;
 	}
 void Quit(string txtEdit[])
 	{
-		cout<<"'Quit' has been called. "
+		char yesNo; 
+		
+		cout<<"You have asked to quit, "
+		<<"would you like to save first? "
 		<<endl;
-		Save(txtEdit);
+		cin>>yesNo;
+		cin.ignore(1000,'\n');
+		yesNo=toupper(yesNo);
+		
+		if(yesNo=='Y' or 'S') // 'Yes' or 'Save' are valid responses. 
+			Save(txtEdit);
+		
 	}
-void Save(string txtEdit[]) // a separate save function so that users can save without quitting. 
+void Save(string txtEdit[]) // a separate save function 
+	// so that users can save without quitting. 
 	{
 		cout<<"'Save' has been called "
+		
+		// 'Apply string array to file' routine goes here. 
+		
 		<<endl;
 	}
-void Separate(string txtEdit[])
-	{
 
-	}
