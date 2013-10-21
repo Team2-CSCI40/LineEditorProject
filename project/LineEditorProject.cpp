@@ -20,7 +20,7 @@ void Insert(string[], string); // ASSIGNED TO Atef/Levi
 void Delete();
 void Replace();
 void Move(string[], string); // ASSIGNED TO Phoebe/Alex
-void Quit();
+void Quit(string[]);
 void Save(string[]); 
 
 
@@ -123,7 +123,7 @@ int main() // Main program
 				
 			}
 			
-			Quit(); // calls quit function, Y or N to save. 
+			Quit(txtFile); // calls quit function, Y or N to save. 
 			
 		return 0;
 	}
@@ -192,7 +192,7 @@ void Move(string txtEdit[], string userInput)
 		cout<<"'Move' has been called. "
 		<<endl;
 	}
-void Quit()
+void Quit(string txtEdit[])
 	{
 		char yesNo; 
 		
@@ -211,6 +211,8 @@ void Save(string txtEdit[]) // a separate save function
 	// so that users can save without quitting. 
 	{
 		cout<<"'Save' has been called "
+		
+		
 		
 		// 'Apply string array to file' routine goes here. 
 		
