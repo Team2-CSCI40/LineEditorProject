@@ -147,9 +147,14 @@ void Substitute()
 		cout<<"'Substitute' has been called. "
 		<<endl;
 	}
-void Type(string txtEdit[], string userInput)
+void Type(string txtEdit[], string userInput) // try changing the array to a reference variable
 	{
 		cout<<"'Type' has been called. "
+		
+		// split the user input command from the number in the input
+			// we're supposed to print the surrounding lines? Not sure how that's supposed to work. 
+		// cin>>txtEdit[lineNumber];
+		
 		<<endl;
 	}
 void Copy()
