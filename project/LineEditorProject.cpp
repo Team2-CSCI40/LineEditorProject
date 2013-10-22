@@ -10,18 +10,19 @@
 #include <fstream>
 using namespace std;
 
-char I_O(char);
+int splitToNum(string);
 void Substitute();
-void Type(string[], string, int); // ASSIGNED TO Cisty
+void Type(string[], int, int&); // ASSIGNED TO Cisty
 void Copy();
 void Paste();
 void Locate();
-void Insert(string[], string, int); // ASSIGNED TO Atef/Levi
+void Insert(string[], int, int&); // ASSIGNED TO Atef/Levi
 void Delete();
 void Replace();
-void Move(string[], string, int); // ASSIGNED TO Phoebe/Alex
+void Move(string[], int, int&); // ASSIGNED TO Phoebe/Alex
 void Quit(string[]);
 void Save(string[]); 
+
 
 
 
@@ -40,7 +41,7 @@ void Save(string[]);
 int main() // Main program
 	{
 		string txtFile[99];
-		int currentLineIndex;
+		int currentLineIndex, inputNum;
 		string inputString;
 		char inputChar;
 		char inputCharSecond;
@@ -68,10 +69,11 @@ int main() // Main program
 						break;
 						
 					case 'T':
-						Type(txtFile, inputString, currentLineIndex);
-						// split up the user input here, rather than in the function. 
-						// for now I'm leaving the input string here, but once you 
-						// split it up, send it to the function as another int. 
+						
+						inputNum=splitToNum(inputString);
+						Type(txtFile, inputNum, currentLineIndex);
+						
+						 
 						break;
 						
 					case 'C':
@@ -87,10 +89,9 @@ int main() // Main program
 						break;
 						
 					case 'I':
-						Insert(txtFile, inputString, currentLineIndex);
-						// split up the user input here, rather than in the function. 
-						// for now I'm leaving the input string here, but once you 
-						// split it up, send it to the function as another int. 
+						inputNum=splitToNum(inputString);
+						Insert(txtFile, inputNum, currentLineIndex);
+						
 						break;
 						
 					case 'D':
@@ -102,10 +103,9 @@ int main() // Main program
 						break;
 						
 					case 'M':
-						Move(txtFile, inputString, currentLineIndex);	
-						// split up the user input here, rather than in the function. 
-						// for now I'm leaving the input string here, but once you 
-						// split it up, send it to the function as another int. 
+						inputNum=splitToNum(inputString);
+						Move(txtFile, inputNum, currentLineIndex);	
+						
 						break;
 					
 					default: // maybe we can add something that 
@@ -140,25 +140,45 @@ int main() // Main program
 	
 	
 	
-	/////////////////
-	//-----Functions
-	//
-	//
-	//
-	////////
-	//////
-	////
-	//
+//	
+////	
+//////
+////////	
+//////////
+////////////
+//////////////
+//Functions/////
+//////////////
+////////////
+//////////
+////////
+//////
+////
+//
 	
+
+int splitToNum(string userInput)
+	{
+		int inputNum;
+		inputNum=1; // as a test, I have this sending the number 11
+			// into anything that calls it. 
+			// If you figure out how to split the user input number from the 
+			// input string, let me know. 
+		
+		
+		cout<<"'Split' has been called"
+		<<endl;
+		return inputNum;
+	}
 	
 void Substitute()
 	{
 		cout<<"'Substitute' has been called. "
 		<<endl;
 	}
-void Type(string txtEdit[], string userInput, int currentLineIndex) // try changing the array to a reference variable
+void Type(string txtEdit[], int numInput, int&currentLineIndex) // try changing the array to a reference variable
 	{
-		cout<<"'Type' has been called. "
+		cout<<"'Type - "<<numInput<<"' has been called. "
 		
 		// takes the number from the user input, which was split up in the main program
 			// we're supposed to print the surrounding lines? Not sure how that's supposed to work. 
@@ -183,7 +203,7 @@ void Locate()
 		cout<<"'Locate' has been called. "
 		<<endl;
 	}
-void Insert(string txtEdit[], string userInput, int currentLineIndex)
+void Insert(string txtEdit[], int numInput, int&currentLineIndex)
 	{
 		cout<<"'Insert' has been called. "
 		// Atef, you will most likely need to do a lot of the work on this one. 
@@ -206,7 +226,7 @@ void Replace()
 		cout<<"'Replace' has been called. "
 		<<endl;
 	}
-void Move(string txtEdit[], string userInput, int currentLineIndex)
+void Move(string txtEdit[], int numInput, int&currentLineIndex)
 	{
 		cout<<"'Move' has been called. "
 		// All this does is changes the current line index inside the array. 
