@@ -12,14 +12,14 @@ using namespace std;
 
 char I_O(char);
 void Substitute();
-void Type(string[], string); // ASSIGNED TO Cisty
+void Type(string[], string, int); // ASSIGNED TO Cisty
 void Copy();
 void Paste();
 void Locate();
-void Insert(string[], string); // ASSIGNED TO Atef/Levi
+void Insert(string[], string, int); // ASSIGNED TO Atef/Levi
 void Delete();
 void Replace();
-void Move(string[], string); // ASSIGNED TO Phoebe/Alex
+void Move(string[], string, int); // ASSIGNED TO Phoebe/Alex
 void Quit(string[]);
 void Save(string[]); 
 
@@ -40,7 +40,7 @@ void Save(string[]);
 int main() // Main program
 	{
 		string txtFile[99];
-		
+		int currentLineIndex;
 		string inputString;
 		char inputChar;
 		char inputCharSecond;
@@ -68,7 +68,10 @@ int main() // Main program
 						break;
 						
 					case 'T':
-						Type(txtFile, inputString);
+						Type(txtFile, inputString, currentLineIndex);
+						// split up the user input here, rather than in the function. 
+						// for now I'm leaving the input string here, but once you 
+						// split it up, send it to the function as another int. 
 						break;
 						
 					case 'C':
@@ -84,7 +87,10 @@ int main() // Main program
 						break;
 						
 					case 'I':
-						Insert(txtFile, inputString);
+						Insert(txtFile, inputString, currentLineIndex);
+						// split up the user input here, rather than in the function. 
+						// for now I'm leaving the input string here, but once you 
+						// split it up, send it to the function as another int. 
 						break;
 						
 					case 'D':
@@ -96,7 +102,10 @@ int main() // Main program
 						break;
 						
 					case 'M':
-						Move(txtFile, inputString);	
+						Move(txtFile, inputString, currentLineIndex);	
+						// split up the user input here, rather than in the function. 
+						// for now I'm leaving the input string here, but once you 
+						// split it up, send it to the function as another int. 
 						break;
 					
 					default: // maybe we can add something that 
@@ -147,12 +156,14 @@ void Substitute()
 		cout<<"'Substitute' has been called. "
 		<<endl;
 	}
-void Type(string txtEdit[], string userInput) // try changing the array to a reference variable
+void Type(string txtEdit[], string userInput, int currentLineIndex) // try changing the array to a reference variable
 	{
 		cout<<"'Type' has been called. "
 		
-		// split the user input command from the number in the input
+		// takes the number from the user input, which was split up in the main program
 			// we're supposed to print the surrounding lines? Not sure how that's supposed to work. 
+			// Talk to Jamison on Wednesday about the above question^^^
+			// perhaps it's supposed to override whatever content is on a specific line, if there is any. 
 		// cin>>txtEdit[lineNumber];
 		
 		<<endl;
@@ -172,9 +183,17 @@ void Locate()
 		cout<<"'Locate' has been called. "
 		<<endl;
 	}
-void Insert(string txtEdit[], string userInput)
+void Insert(string txtEdit[], string userInput, int currentLineIndex)
 	{
 		cout<<"'Insert' has been called. "
+		// Atef, you will most likely need to do a lot of the work on this one. 
+		// I say that because Levi has been gone for a while due to illness, 
+		// so he is probably going to be very confused about what is going on
+		// once he returns, if he does in the near future. 
+		
+		// Anyway, this mostly revolves around figuring out how to move the indexes down. 
+		// This can be done with a for loop, I'm pretty sure. 
+		// If I get a chance, I'll make a branch of this repository so I can try this. 
 		<<endl;
 	}
 void Delete()
@@ -187,25 +206,53 @@ void Replace()
 		cout<<"'Replace' has been called. "
 		<<endl;
 	}
-void Move(string txtEdit[], string userInput)
+void Move(string txtEdit[], string userInput, int currentLineIndex)
 	{
 		cout<<"'Move' has been called. "
+		// All this does is changes the current line index inside the array. 
+		// If there are complications with this, we should ask Jamison. 
+		// I'm not totally sure if having the current line index thing is the way to go, because 
+		// I didn't get a chance to talk to Jamison today, but if you see any reason it shouldn't work
+		// let me know immediately. More importantly, if you have a solution, let me know. 
+		
 		<<endl;
 	}
 void Quit(string txtEdit[])
 	{
-		char yesNo; 
+		char yesNo;
 		
 		cout<<"You have asked to quit, "
 		<<"would you like to save first? "
 		<<endl;
+		
 		cin>>yesNo;
 		cin.ignore(1000,'\n');
 		yesNo=toupper(yesNo);
 		
-		if(yesNo=='Y' or 'S') // 'Yes' or 'Save' are valid responses. 
-			Save(txtEdit);
+		switch(yesNo)
+			{
+				case 'Y':
+					Save(txtEdit);
+					break;
+				case 'S':
+					Save(txtEdit);
+					break;
+				case 'N':
+					break;
+				
+			}
+			
 		
+		/*
+		if(yesNo=='Y' or 'S') // 'Yes' or 'Save' are valid responses. 
+			{
+				Save(txtEdit);
+			}
+		else
+			{
+				cout<<"Have a nice day!"<<endl;
+			}
+		*/
 	}
 void Save(string txtEdit[]) // a separate save function 
 	// so that users can save without quitting. 
@@ -215,6 +262,8 @@ void Save(string txtEdit[]) // a separate save function
 		
 		
 		// 'Apply string array to file' routine goes here. 
+		// IF ANYONE KNOWS HOW TO DO THIS, DO IT, I DON'T THINK IT'S VERY HARD, 
+		// BUT I LOST MY NOTES. 
 		
 		<<endl;
 	}
