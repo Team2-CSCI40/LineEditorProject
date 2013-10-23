@@ -16,10 +16,10 @@ void Type(string[], int, int&); // ASSIGNED TO Cisty
 void Copy();
 void Paste();
 void Locate();
-void Insert(string[], int, int&); // ASSIGNED TO Atef/Levi
+void Insert(string[],int &,int &,int &); // ASSIGNED TO Atef/Levi
 void Delete();
 void Replace();
-void Move(string[], int, int&); // ASSIGNED TO Phoebe/Alex
+void Move(int &,int); // ASSIGNED TO Phoebe/Alex
 void Quit(string[]);
 void Save(string[]); 
 
@@ -40,9 +40,21 @@ void Save(string[]);
 
 int main() // Main program
 	{
-		string txtFile[99];
+		string txtFile[100];
+		int insert_number; //this is show how many line we will insert in the array. 
+		int base = 0; // this is show where we gonna start the insert in the array and by defult it will statrt from the zero element.
+		int total = 0; // this is show how many lines is in the string array.
+		int move_the_base_number;//this will send with the move statment to make the offset for the base_number
+		
+		//---------------------------------------------
+		// These variables may or may not be used.  
+		//
 		int currentLineIndex, inputNum;
+		//
+		//
+		//---------------------------------------------
 		string inputString;
+		
 		char inputChar;
 		char inputCharSecond;
 		
@@ -71,7 +83,7 @@ int main() // Main program
 					case 'T':
 						
 						inputNum=splitToNum(inputString);
-						Type(txtFile, inputNum, currentLineIndex);
+						Type(txtFile, inputNum, base);
 						
 						 
 						break;
@@ -90,7 +102,7 @@ int main() // Main program
 						
 					case 'I':
 						inputNum=splitToNum(inputString);
-						Insert(txtFile, inputNum, currentLineIndex);
+						Insert(txtFile, insert_number,base,total);
 						
 						break;
 						
@@ -104,7 +116,7 @@ int main() // Main program
 						
 					case 'M':
 						inputNum=splitToNum(inputString);
-						Move(txtFile, inputNum, currentLineIndex);	
+						Move(base,move_the_base_number);	
 						
 						break;
 					
@@ -160,7 +172,7 @@ int main() // Main program
 int splitToNum(string userInput)
 	{
 		int inputNum;
-		inputNum=1; // as a test, I have this sending the number 11
+		inputNum=11; // as a test, I have this sending the number 11
 			// into anything that calls it. 
 			// If you figure out how to split the user input number from the 
 			// input string, let me know. 
@@ -176,7 +188,7 @@ void Substitute()
 		cout<<"'Substitute' has been called. "
 		<<endl;
 	}
-void Type(string txtEdit[], int numInput, int&currentLineIndex) // try changing the array to a reference variable
+void Type(string txtEdit[], int numInput, int &base_number) // try changing the array to a reference variable
 	{
 		cout<<"'Type - "<<numInput<<"' has been called. "
 		
@@ -203,7 +215,7 @@ void Locate()
 		cout<<"'Locate' has been called. "
 		<<endl;
 	}
-void Insert(string txtEdit[], int numInput, int&currentLineIndex)
+void Insert(string txtEdit[], int &insert_number, int &base_number,int &total_number)
 	{
 		cout<<"'Insert' has been called. "
 		// Atef, you will most likely need to do a lot of the work on this one. 
@@ -215,6 +227,27 @@ void Insert(string txtEdit[], int numInput, int&currentLineIndex)
 		// This can be done with a for loop, I'm pretty sure. 
 		// If I get a chance, I'll make a branch of this repository so I can try this. 
 		<<endl;
+		int i,z,x;
+		total_number = total_number + insert_number;
+		if(base_number == 0)
+		{ for( i = 0; i <= insert_number-1; i++)
+		{
+			getline(cin,txtEdit[i]);
+		}
+		base_number = insert_number - 1;
+		}
+		else 
+		{
+			for (x = total_number -1 ; x >= base_number + 1 ; x--)
+			{
+				txtEdit [ x + insert_number] = txtEdit [x];
+			}
+			for( z = base_number + 1; z <= insert_number;z++)
+			{
+				getline(cin,txtEdit[z]);
+			}
+			base_number = z;
+		}
 	}
 void Delete()
 	{
@@ -226,7 +259,7 @@ void Replace()
 		cout<<"'Replace' has been called. "
 		<<endl;
 	}
-void Move(string txtEdit[], int numInput, int&currentLineIndex)
+void Move(int &base_number,int move_offset)
 	{
 		cout<<"'Move' has been called. "
 		// All this does is changes the current line index inside the array. 
@@ -236,6 +269,7 @@ void Move(string txtEdit[], int numInput, int&currentLineIndex)
 		// let me know immediately. More importantly, if you have a solution, let me know. 
 		
 		<<endl;
+		base_number = base_number + move_offset;
 	}
 void Quit(string txtEdit[])
 	{
