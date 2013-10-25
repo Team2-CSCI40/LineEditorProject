@@ -12,7 +12,7 @@ using namespace std;
 
 int splitToNum(string);
 void Substitute();
-void Type(string[], int, int&); // ASSIGNED TO Cisty
+void Type(string[], int, int &); // ASSIGNED TO Cisty
 void Copy();
 void Paste();
 void Locate();
@@ -36,10 +36,11 @@ void Save(string[]);
 int main() // Main program
 	{
 		string txtFile[100];
-		int insert_number; //this is show how many line we will insert in the array. 
+		int insert_number = 0; //this is show how many line we will insert in the array. 
 		int base = 0; // this is show where we gonna start the insert in the array and by defult it will statrt from the zero element.
 		int total = 0; // this is show how many lines is in the string array.
 		int move_the_base_number;//this will send with the move statment to make the offset for the base_number
+		int type_number;
 		
 		//---------------------------------------------
 		// These variables may or may not be used.  
@@ -73,8 +74,9 @@ int main() // Main program
 							Save(txtFile);
 						break;
 					case 'T':
-						inputNum=splitToNum(inputString);
-						Type(txtFile, inputNum, base);
+						cin>>type_number;
+						//inputNum=splitToNum(inputString);
+						Type(txtFile, type_number, base);
 						break;
 					case 'C':
 						Copy();	
@@ -86,7 +88,8 @@ int main() // Main program
 						Locate();
 						break;
 					case 'I':
-						inputNum=splitToNum(inputString);
+						//inputNum=splitToNum(inputString);
+						cin>>insert_number;
 						Insert(txtFile, insert_number,base,total);
 						break;
 					case 'D':
@@ -96,7 +99,8 @@ int main() // Main program
 						Replace();
 						break;	
 					case 'M':
-						inputNum=splitToNum(inputString);
+						//inputNum=splitToNum(inputString);
+						cin>>move_the_base_number;
 						Move(base,move_the_base_number);	
 						
 						break;
@@ -159,17 +163,19 @@ void Substitute()
 		<<endl;
 	}
 
-void Type(string txtEdit[], int numInput, int &base_number) // NEEDS SOME WORK
+void Type(string txtEdit[], int type_number, int &base_number) // NEEDS SOME WORK
 	{
-		cout<<"'Type - "<<numInput<<"' has been called. "
 		
-		// takes the number from the user input, which was split up in the main program
-			// we're supposed to print the surrounding lines? Not sure how that's supposed to work. 
-			// Talk to Jamison on Wednesday about the above question^^^
-			// perhaps it's supposed to override whatever content is on a specific line, if there is any. 
-		// cin>>txtEdit[lineNumber];
-		
+		cout<<"'Type has been called. "
 		<<endl;
+		int i;
+		for(i=base_number; i<=(base_number+(type_number-1))/*base_number+type_number*/; i++)
+			{
+				cout<<txtEdit[i]
+					<<endl;
+			}
+		
+		
 	}
 
 void Copy()
@@ -192,28 +198,11 @@ void Locate()
 
 void Insert(string txtEdit[], int &insert_number, int &base_number,int &total_number) // NEEDS SOME WORK
 	{
-		cout<<"'Insert' has been called. "
-		// Atef, you will most likely need to do a lot of the work on this one. 
-		// I say that because Levi has been gone for a while due to illness, 
-		// so he is probably going to be very confused about what is going on
-		// once he returns, if he does in the near future. 
-		
-		// Anyway, this mostly revolves around figuring out how to move the indexes down. 
-		// This can be done with a for loop, I'm pretty sure. 
-		// If I get a chance, I'll make a branch of this repository so I can try this. 
-		<<endl;
-		int i,z,x;
+		cout<<"'Insert' has been called. "<<endl;
+		int z,x;
 		total_number = total_number + insert_number;
-		/*if(base_number == 0)
-		{ for( i = 0; i <= insert_number-1; i++)
-		{
-			getline(cin,txtEdit[i]);
-		}
-		base_number = insert_number - 1;
-		}
-		else*/ 
-		//{
-			for (x = total_number -1 ; x >= base_number + 1 ; x--)
+		
+			for (x = total_number  ; x >= base_number +1 ; x--)
 				{
 					txtEdit [ x + insert_number] = txtEdit [x];
 				}
@@ -222,7 +211,8 @@ void Insert(string txtEdit[], int &insert_number, int &base_number,int &total_nu
 					getline(cin,txtEdit[z]);
 				}
 			base_number = z;
-		//}
+			
+			cin.ignore(1000,'\n');
 	}
 
 void Delete()
@@ -242,6 +232,8 @@ void Move(int &base_number,int move_offset) // MORE OR LESS DONE.
 		cout<<"'Move' has been called. "
 		<<endl;
 		base_number = base_number + move_offset;
+		// the below line is temporary
+		cout<<"base num: "<<base_number<<endl;
 	}
 
 void Quit(string txtEdit[])
