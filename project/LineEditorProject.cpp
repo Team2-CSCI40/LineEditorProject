@@ -23,20 +23,15 @@ void Move(int &,int); // ASSIGNED TO Phoebe/Alex
 void Quit(string[]);
 void Save(string[]); 
 
-
-
-
 ////////////////////////////////////////////////<IDEAS>
-// (Feel free to add to this field)
+// // // (Feel free to add to this field)
 //
 //
 // Post to Facebook function (can probably be done with PHP)
-// fun little animation things
+// animation things (no idea where to start with this)
 // 
 //  
 ///////////////////////////////////////////////</IDEAS>
-
-
 
 int main() // Main program
 	{
@@ -59,9 +54,8 @@ int main() // Main program
 		char inputCharSecond;
 		
 		inputChar=' '; // Initializes variable as a space, 
-			// uses initialization to welcome the user in switch. 
-		
-		while(inputChar!='Q') // Main event loop. //quit
+			// uses ' ' to welcome the user in switch. 
+		while(inputChar!='Q') // Main event loop. //"if not quit"
 			{
 				switch(inputChar)
 				{
@@ -70,7 +64,6 @@ int main() // Main program
 							// as described above. 
 						<<endl;
 						break;
-						
 					case 'S': // if a case has two possible functions
 						inputCharSecond=inputString.at(1); // look at the second letter. 
 						inputCharSecond=toupper(inputCharSecond);
@@ -79,47 +72,34 @@ int main() // Main program
 						if(inputCharSecond=='A')
 							Save(txtFile);
 						break;
-						
 					case 'T':
-						
 						inputNum=splitToNum(inputString);
 						Type(txtFile, inputNum, base);
-						
-						 
 						break;
-						
 					case 'C':
 						Copy();	
 						break;
-						
 					case 'P':
 						Paste();
 						break;
-						
 					case 'L':
 						Locate();
 						break;
-						
 					case 'I':
 						inputNum=splitToNum(inputString);
 						Insert(txtFile, insert_number,base,total);
-						
 						break;
-						
 					case 'D':
 						Delete();
-						break;
-						
+						break;	
 					case 'R':
 						Replace();
-						break;
-						
+						break;	
 					case 'M':
 						inputNum=splitToNum(inputString);
 						Move(base,move_the_base_number);	
 						
 						break;
-					
 					default: // maybe we can add something that 
 						// redirects the user to the 
 						// project's wiki page, opening their browser... 
@@ -128,29 +108,21 @@ int main() // Main program
 							<<endl
 							<<"Please enter a valid command. "
 							<<endl;
-						break;
-						
+						break;	
 				}	
-				
-				
+
 				cout<<"Command? "
 					<<endl;		
-				cin>>inputString;
+				cin>>inputString;//getline
 				cin.ignore(1000,'\n');
 				
 				inputChar=inputString.at(0);
-				inputChar=toupper(inputChar);
-				
-				
+				inputChar=toupper(inputChar);	
 			}
-			
-			Quit(txtFile); // calls quit function, Y or N to save. 
-			
+
+			Quit(txtFile); // calls quit function, Y or N to save. 	
 		return 0;
 	}
-	
-	
-	
 	
 //	
 ////	
@@ -168,7 +140,6 @@ int main() // Main program
 ////
 //
 	
-
 int splitToNum(string userInput)
 	{
 		int inputNum;
@@ -176,8 +147,7 @@ int splitToNum(string userInput)
 			// into anything that calls it. 
 			// If you figure out how to split the user input number from the 
 			// input string, let me know. 
-		
-		
+				
 		cout<<"'Split' has been called"
 		<<endl;
 		return inputNum;
@@ -188,7 +158,8 @@ void Substitute()
 		cout<<"'Substitute' has been called. "
 		<<endl;
 	}
-void Type(string txtEdit[], int numInput, int &base_number) // try changing the array to a reference variable
+
+void Type(string txtEdit[], int numInput, int &base_number) // NEEDS SOME WORK
 	{
 		cout<<"'Type - "<<numInput<<"' has been called. "
 		
@@ -200,22 +171,26 @@ void Type(string txtEdit[], int numInput, int &base_number) // try changing the 
 		
 		<<endl;
 	}
+
 void Copy()
 	{
 		cout<<"'Copy' has been called. "
 		<<endl;
 	}
+
 void Paste()
 	{
 		cout<<"'Paste' has been called. "
 		<<endl;
 	}
+
 void Locate()
 	{
 		cout<<"'Locate' has been called. "
 		<<endl;
 	}
-void Insert(string txtEdit[], int &insert_number, int &base_number,int &total_number)
+
+void Insert(string txtEdit[], int &insert_number, int &base_number,int &total_number) // NEEDS SOME WORK
 	{
 		cout<<"'Insert' has been called. "
 		// Atef, you will most likely need to do a lot of the work on this one. 
@@ -229,48 +204,46 @@ void Insert(string txtEdit[], int &insert_number, int &base_number,int &total_nu
 		<<endl;
 		int i,z,x;
 		total_number = total_number + insert_number;
-		if(base_number == 0)
+		/*if(base_number == 0)
 		{ for( i = 0; i <= insert_number-1; i++)
 		{
 			getline(cin,txtEdit[i]);
 		}
 		base_number = insert_number - 1;
 		}
-		else 
-		{
+		else*/ 
+		//{
 			for (x = total_number -1 ; x >= base_number + 1 ; x--)
-			{
-				txtEdit [ x + insert_number] = txtEdit [x];
-			}
+				{
+					txtEdit [ x + insert_number] = txtEdit [x];
+				}
 			for( z = base_number + 1; z <= insert_number;z++)
-			{
-				getline(cin,txtEdit[z]);
-			}
+				{
+					getline(cin,txtEdit[z]);
+				}
 			base_number = z;
-		}
+		//}
 	}
+
 void Delete()
 	{
 		cout<<"'Delete' has been called. "
 		<<endl;
 	}
+
 void Replace()
 	{
 		cout<<"'Replace' has been called. "
 		<<endl;
 	}
-void Move(int &base_number,int move_offset)
+
+void Move(int &base_number,int move_offset) // MORE OR LESS DONE. 
 	{
 		cout<<"'Move' has been called. "
-		// All this does is changes the current line index inside the array. 
-		// If there are complications with this, we should ask Jamison. 
-		// I'm not totally sure if having the current line index thing is the way to go, because 
-		// I didn't get a chance to talk to Jamison today, but if you see any reason it shouldn't work
-		// let me know immediately. More importantly, if you have a solution, let me know. 
-		
 		<<endl;
 		base_number = base_number + move_offset;
 	}
+
 void Quit(string txtEdit[])
 	{
 		char yesNo;
@@ -293,22 +266,13 @@ void Quit(string txtEdit[])
 					break;
 				case 'N':
 					break;
-				
 			}
-			
+		cout<<"Have a nice day!"<<endl;	
 		
-		/*
-		if(yesNo=='Y' or 'S') // 'Yes' or 'Save' are valid responses. 
-			{
-				Save(txtEdit);
-			}
-		else
-			{
-				cout<<"Have a nice day!"<<endl;
-			}
-		*/
 	}
-void Save(string txtEdit[]) // a separate save function 
+
+void Save(string txtEdit[]) // NEEDS SOME WORK 
+	// a separate save function 
 	// so that users can save without quitting. 
 	{
 		cout<<"'Save' has been called "
