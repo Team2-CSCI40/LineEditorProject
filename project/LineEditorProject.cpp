@@ -19,7 +19,7 @@ void Locate();
 void Insert(string[],int &,int &,int &); // ASSIGNED TO Atef/Levi
 void Delete();
 void Replace();
-void Move(int &,int); // ASSIGNED TO Phoebe/Alex
+void Move(string[],int &,int); // ASSIGNED TO Phoebe/Alex
 void Quit(string[]);
 void Save(string[]); 
 
@@ -101,7 +101,7 @@ int main() // Main program
 					case 'M':
 						//inputNum=splitToNum(inputString);
 						cin>>move_the_base_number;
-						Move(base,move_the_base_number);	
+						Move(txtFile,base,move_the_base_number);	
 						
 						break;
 					default: // maybe we can add something that 
@@ -227,13 +227,14 @@ void Replace()
 		<<endl;
 	}
 
-void Move(int &base_number,int move_offset) // MORE OR LESS DONE. 
+void Move(string txtEdit[], int &base_number,int move_offset) 
 	{
 		cout<<"'Move' has been called. "
 		<<endl;
 		base_number = base_number + move_offset;
 		// the below line is temporary
-		cout<<"base num: "<<base_number<<endl;
+		cout<<"Line: "<<base_number<<endl;
+		cout<<txtEdit[base_number]<<endl;
 	}
 
 void Quit(string txtEdit[])
