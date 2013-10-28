@@ -12,7 +12,7 @@ using namespace std;
 
 int splitToNum(string);
 void Substitute();
-void Type(string[], int, int &); // ASSIGNED TO Cisty
+void Type(string[], int, int ); // ASSIGNED TO Cisty
 void Copy();
 void Paste();
 void Locate();
@@ -22,8 +22,6 @@ void Replace();
 void Move(string[],int &,int); // ASSIGNED TO Phoebe/Alex
 void Quit(string[]);
 void Save(string[]); 
-
-const int ARRAY_MAX=100;
 
 ////////////////////////////////////////////////<IDEAS>
 // // // (Feel free to add to this field)
@@ -37,13 +35,12 @@ const int ARRAY_MAX=100;
 
 int main() // Main program
 	{
-		string txtFile[ARRAY_MAX];
+		string txtFile[100];
 		int insert_number = 0; //this is show how many line we will insert in the array. 
 		int base = 0; // this is show where we gonna start the insert in the array and by defult it will statrt from the zero element.
 		int total = 0; // this is show how many lines is in the string array.
-		int move_the_base_number;//this will send with the move statment to make the offset for the base_number
+		int move_number;//this will send with the move statment to make the offset for the base_number
 		int type_number;
-		
 		
 		//---------------------------------------------
 		// These variables may or may not be used.  
@@ -56,9 +53,6 @@ int main() // Main program
 		
 		char inputChar;
 		char inputCharSecond;
-		
-		
-		
 		
 		inputChar=' '; // Initializes variable as a space, 
 			// uses ' ' to welcome the user in switch. 
@@ -106,8 +100,8 @@ int main() // Main program
 						break;	
 					case 'M':
 						//inputNum=splitToNum(inputString);
-						cin>>move_the_base_number;
-						Move(txtFile,base,move_the_base_number);	
+						cin>>move_number;
+						Move(txtFile,base,move_number);	
 						
 						break;
 					default: // maybe we can add something that 
@@ -169,16 +163,19 @@ void Substitute()
 		<<endl;
 	}
 
-void Type(string txtEdit[], int type_number, int &base_number) // NEEDS SOME WORK
-	{	
+void Type(string txtFile[], int type_number, int base) // NEEDS SOME WORK
+	{
+		
 		cout<<"'Type has been called. "
 		<<endl;
 		int i;
-		for(i=base_number; i<=base_number+type_number-1; i++)
+		for(i=base-1; i<=(base+type_number)-1; i++)
 			{
-				cout<<txtEdit[i]
+				cout<<txtFile[i+1]
 					<<endl;
 			}
+		
+		
 	}
 
 void Copy()
@@ -199,43 +196,25 @@ void Locate()
 		<<endl;
 	}
 
-void Insert(string txtEdit[], int &insert_number, int &base_number,int &total_number) // NEEDS SOME WORK
+void Insert(string txtFile[], int &insert_number, int &base,int &total) // NEEDS SOME WORK
 	{
 		cout<<"'Insert' has been called. "<<endl;
-		
-		//This is Atef's version of Insert
-		/*
-		int z,x;
-		total_number = total_number + insert_number;
-		
-			for (x = total_number  ; x >= base_number +1 ; x--)
-				{
-					txtEdit [ x + insert_number] = txtEdit [x];
-				}
-			for( z = base_number + 1; z <= insert_number;z++)
-				{
-					getline(cin,txtEdit[z]);
-				}
-			base_number = z;
-		*/
-		
-		//This is Nick's version of Insert
 		int i;
 		
-		for(i=ARRAY_MAX; i>=base_number-insert_number; i--)
-			{
-				txtEdit[i]=txtEdit[i-1];
-			}
-		for(i=base_number+1; i<=base_number+insert_number; i++)
-			{
-				getline(cin,txtEdit[i]);
-				
-			}
-		base_number=i;
+			for (i=total; i>=base+1; i--)
+				{
+					txtFile[i+insert_number]=txtFile[i];
+				}
+			for(i=base+1; i<=insert_number+base; i++)
+				{
+					getline(cin,txtFile[i]);
+				}
+			base = i-1;
 			
-			
-			
-		//cin.ignore(1000,'\n');
+			cin.ignore(1000,'\n');
+			total = total + insert_number;
+			cout<<"total = "<<total<<endl;
+			cout<<"base= "<<base<<endl;
 	}
 
 void Delete()
@@ -250,17 +229,17 @@ void Replace()
 		<<endl;
 	}
 
-void Move(string txtEdit[], int &base_number,int move_offset) 
+void Move(string txtFile[], int &base,int move_number) 
 	{
 		cout<<"'Move' has been called. "
 		<<endl;
-		base_number = base_number + move_offset;
+		base =base+ move_number;
 		// the below line is temporary
-		cout<<"Line: "<<base_number<<endl;
-		cout<<txtEdit[base_number]<<endl;
+		cout<<"Line: "<<base<<endl;
+		cout<<txtFile[base+1]<<endl;
 	}
 
-void Quit(string txtEdit[])
+void Quit(string txtFile[])
 	{
 		char yesNo;
 		
@@ -275,10 +254,10 @@ void Quit(string txtEdit[])
 		switch(yesNo)
 			{
 				case 'Y':
-					Save(txtEdit);
+					Save(txtFile);
 					break;
 				case 'S':
-					Save(txtEdit);
+					Save(txtFile);
 					break;
 				case 'N':
 					break;
@@ -287,7 +266,7 @@ void Quit(string txtEdit[])
 		
 	}
 
-void Save(string txtEdit[]) // NEEDS SOME WORK 
+void Save(string txtFile[]) // NEEDS SOME WORK 
 	// a separate save function 
 	// so that users can save without quitting. 
 	{
