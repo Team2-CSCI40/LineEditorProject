@@ -164,14 +164,20 @@ void Substitute()
 	}
 
 void Type(string txtFile[], int type_number, int base) // NEEDS SOME WORK
-	{
+	{ // THERE IS A PROBLEM WITH TYPE< IT IS MOVING THINGS OVER. 
+		/* //testing zone
+		txtFile[0]="Line zero.";
+		txtFile[1]="Line one.";
+		txtFile[2]="Line two.";
+		txtFile[3]="Line three.";
+		*/
 		
-		cout<<"'Type has been called. "
+		cout<<"'Type' has been called. "
 		<<endl;
 		int i;
-		for(i=base-1; i<=(base+type_number)-1; i++)
+		for(i=base; i<(base+type_number); i++)
 			{
-				cout<<txtFile[i+1]
+				cout<<txtFile[i]
 					<<endl;
 			}
 		
@@ -197,24 +203,27 @@ void Locate()
 	}
 
 void Insert(string txtFile[], int &insert_number, int &base,int &total) // NEEDS SOME WORK
-	{
+	{ //INSERT IS TRUNCATING THE LAST USER INSERTED LINE
 		cout<<"'Insert' has been called. "<<endl;
 		int i;
-		
-			for (i=total; i>=base+1; i--)
+		base=0;////////////////////////
+			for (i=total; i>base; i--)
 				{
 					txtFile[i+insert_number]=txtFile[i];
 				}
-			for(i=base+1; i<=insert_number+base; i++)
+			for(i=base; i<insert_number+base; i++) //skips it the first time... 
 				{
+					if(i==base)
+						cin.ignore(1000,'\n');
+					cout<<"> ";
 					getline(cin,txtFile[i]);
 				}
-			base = i-1;
+			base = i;
 			
-			cin.ignore(1000,'\n');
+			//cin.ignore(1000,'\n');
 			total = total + insert_number;
 			cout<<"total = "<<total<<endl;
-			cout<<"base= "<<base<<endl;
+			cout<<"base = "<<base<<endl;
 	}
 
 void Delete()
@@ -236,7 +245,7 @@ void Move(string txtFile[], int &base,int move_number)
 		base =base+ move_number;
 		// the below line is temporary
 		cout<<"Line: "<<base<<endl;
-		cout<<txtFile[base+1]<<endl;
+		cout<<txtFile[base]<<endl;
 	}
 
 void Quit(string txtFile[])
