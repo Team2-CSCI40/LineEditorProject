@@ -9,10 +9,10 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
-const bool debug = true;
+
 int splitToNum(string);
 void Substitute();
-void Type(string[], int, int&); // ASSIGNED TO Cisty
+void Type(string[], int, int ); // ASSIGNED TO Cisty
 void Copy();
 void Paste();
 void Locate();
@@ -74,7 +74,7 @@ int main() // Main program
 							Save(txtFile);
 						break;
 					case 'T':
-						//cout<<"Value? > ";
+						cout<<"Value? > ";
 						cin>>type_number;
 						//inputNum=splitToNum(inputString);
 						Type(txtFile, type_number, base);
@@ -90,7 +90,7 @@ int main() // Main program
 						break;
 					case 'I':
 						//inputNum=splitToNum(inputString);
-						//cout<<"Value? > ";
+						cout<<"Value? > ";
 						cin>>insert_number;
 						Insert(txtFile, insert_number,base,total);
 						break;
@@ -102,7 +102,7 @@ int main() // Main program
 						break;	
 					case 'M':
 						//inputNum=splitToNum(inputString);
-						//cout<<"Value? > ";
+						cout<<"Value? > ";
 						cin>>move_number;
 						Move(txtFile,base,move_number);	
 						
@@ -119,11 +119,11 @@ int main() // Main program
 				}	
 
 				cout<<"Command? "
-					<<endl;	
-				cin>>inputChar;
-				//cin.ignore(1000,'\n');
+					<<endl;		
+				cin>>inputString;//getline
+				cin.ignore(1000,'\n');
 				
-				//inputChar=inputString.at(0);
+				inputChar=inputString.at(0);
 				inputChar=toupper(inputChar);	
 			}
 
@@ -149,31 +149,12 @@ int main() // Main program
 	
 int splitToNum(string userInput)
 	{
-		int i;
-		int inputNum=0;
-		
-		int reader;
-		reader=0;
-		for(i=1;i<=userInput.length()-1;i++)
-			{
-				reader*=10;
-				reader+=userInput.at(i)-'0';
+		int inputNum;
+		inputNum=11; // as a test, I have this sending the number 11
+			// into anything that calls it. 
+			// If you figure out how to split the user input number from the 
+			// input string, let me know. 
 				
-			}
-		inputNum=reader;
-		/*	
-		for(i=0; i<=userInput.length()-1;i++)
-			{
-				userInput.at(i);
-				
-			}
-			/*
-			if(userInput.at(1)=='-')
-				{
-					inputNum*-1;
-				}
-			else if(userInput.at(1)=='')
-			*/
 		cout<<"'Split' has been called"
 		<<endl;
 		return inputNum;
@@ -185,7 +166,7 @@ void Substitute()
 		<<endl;
 	}
 
-void Type(string txtFile[], int type_number, int&base) 
+void Type(string txtFile[], int type_number, int base) 
 	{ 
 		/* //testing zone
 		txtFile[0]="Line zero.";
@@ -194,14 +175,13 @@ void Type(string txtFile[], int type_number, int&base)
 		txtFile[3]="Line three.";
 		*/
 		
-		//cout<<"'Type' has been called. "
-		//<<endl;
+		cout<<"'Type' has been called. "
+		<<endl;
 		int i;
 		for(i=base; i<(base+type_number); i++)
 			{
 				cout<<"> "<<txtFile[i]<<endl;
 			}
-		base=base+type_number-1;
 	}
 
 void Copy()
@@ -224,27 +204,24 @@ void Locate()
 
 void Insert(string txtFile[], int &insert_number, int &base,int &total) 
 	{ 
-		//cout<<"'Insert' has been called. "<<endl;
+		cout<<"'Insert' has been called. "<<endl;
 		int i;
-		//base=0;
+		base=0;
 			for (i=total; i>base; i--)
 				{
 					txtFile[i+insert_number]=txtFile[i];
 				}
 			cin.ignore(1000,'\n');
-			for(i=base+1; i<=insert_number+base; i++) 
+			for(i=base; i<insert_number+base; i++) 
 				{
 					cout<<"> ";
 					getline(cin,txtFile[i]);
 				}
-			base = insert_number+base;
+			base = i;
 			
 			total = total + insert_number;
-			/*if (debug)
-				{
-					//cout<<"total = "<<total<<endl;
-					//cout<<"base = "<<base<<endl;
-				}*/
+			cout<<"total = "<<total<<endl;
+			cout<<"base = "<<base<<endl;
 	}
 
 void Delete()
@@ -261,8 +238,8 @@ void Replace()
 
 void Move(string txtFile[], int &base,int move_number) 
 	{
-		//cout<<"'Move' has been called. "
-		//<<endl;
+		cout<<"'Move' has been called. "
+		<<endl;
 		base =base+ move_number;
 		// the below line is temporary
 		cout<<"Line: "<<base<<endl;
