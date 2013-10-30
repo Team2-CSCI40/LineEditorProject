@@ -9,7 +9,9 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
-const bool debug = true;
+const bool DEBUG = false;
+const int MAX = 100;
+
 int splitToNum(string);
 void Substitute();
 void Type(string[], int, int&); // ASSIGNED TO Cisty
@@ -29,13 +31,14 @@ void Save(string[]);
 //
 // Post to Facebook function (can probably be done with PHP)
 // animation things (no idea where to start with this)
+// word count/char count?
 // 
 //  
 ///////////////////////////////////////////////</IDEAS>
 
 int main() // Main program
 	{
-		string txtFile[100];
+		string txtFile[MAX];
 		int insert_number = 0; //this is show how many line we will insert in the array. 
 		int base = 0; // this is show where we gonna start the insert in the array and by defult it will statrt from the zero element.
 		int total = 0; // this is show how many lines is in the string array.
@@ -224,9 +227,7 @@ void Locate()
 
 void Insert(string txtFile[], int &insert_number, int &base,int &total) 
 	{ 
-		//cout<<"'Insert' has been called. "<<endl;
 		int i;
-		//base=0;
 			for (i=total; i>base; i--)
 				{
 					txtFile[i+insert_number]=txtFile[i];
@@ -240,11 +241,11 @@ void Insert(string txtFile[], int &insert_number, int &base,int &total)
 			base = insert_number+base;
 			
 			total = total + insert_number;
-			/*if (debug)
+			if (DEBUG)
 				{
-					//cout<<"total = "<<total<<endl;
-					//cout<<"base = "<<base<<endl;
-				}*/
+					cout<<"total = "<<total<<endl;
+					cout<<"base = "<<base<<endl;
+				}
 	}
 
 void Delete()
@@ -261,12 +262,12 @@ void Replace()
 
 void Move(string txtFile[], int &base,int move_number) 
 	{
-		//cout<<"'Move' has been called. "
-		//<<endl;
 		base =base+ move_number;
-		// the below line is temporary
-		cout<<"Line: "<<base<<endl;
-		//
+		
+		if(DEBUG)
+			{
+				cout<<"Line: "<<base<<endl;
+			}
 		cout<<"Text from current line: "<<endl<<"> "<<txtFile[base]<<endl;
 	}
 
