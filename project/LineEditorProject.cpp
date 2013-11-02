@@ -154,11 +154,27 @@ int main() // Main program
 	
 int Reader(string userInput)
 	{
-		int inputNum;
-	
+		int i, inputNum, signChange=1, temp;
+		
+		for(i=0; i<=userInput.length()-1; i++)
+			{
+				temp=userInput.at(i);
+				if(temp=='-')
+					{
+						signChange=-1;
+					}
+				temp=temp-'0';
+				if(temp<=9)
+					{
+						inputNum=inputNum*10;
+						inputNum=inputNum+temp;
+					}
+			}
+		inputNum=inputNum*signChange;
+		
 		if(DEBUG)
 			{
-				cout<<"'Split' has been called"<<endl;
+				cout<<"'Reader' has been called"<<endl;
 			}
 		return inputNum;
 	}
