@@ -81,9 +81,9 @@ int main() // Main program
 							Save(txtFile);*/
 						break;
 					case 'T':
-						cin>>type_number;
-						//inputNum=Reader(inputString);
-						Type(txtFile, type_number, base);
+						//cin>>type_number;
+						inputNum=Reader(inputString);
+						Type(txtFile, inputNum, base);
 						break;
 					case 'C':
 						Copy();	
@@ -95,9 +95,9 @@ int main() // Main program
 						Locate();
 						break;
 					case 'I':
-						//inputNum=Reader(inputString);
-						cin>>insert_number;
-						Insert(txtFile, insert_number,base,total);
+						inputNum=Reader(inputString);
+						//cin>>insert_number;
+						Insert(txtFile, inputNum,base,total);
 						break;
 					case 'D':
 						Delete();
@@ -106,9 +106,9 @@ int main() // Main program
 						Replace();
 						break;	
 					case 'M':
-						//inputNum=Reader(inputString);
-						cin>>move_number;
-						Move(txtFile,base,move_number);	
+						inputNum=Reader(inputString);
+						//cin>>move_number;
+						Move(txtFile,base,inputNum);	
 						
 						break;
 					case '*': // * saves file to disk
@@ -126,9 +126,9 @@ int main() // Main program
 				}	
 
 				cout<<"Command? "<<endl;	
-				cin>>inputChar;
+				cin>>inputString;
 				
-				//inputChar=inputString.at(0);
+				inputChar=inputString.at(0);
 				inputChar=toupper(inputChar);	
 			}
 
@@ -152,19 +152,19 @@ int main() // Main program
 ////
 //
 	
-int Reader(string userInput)
+int Reader(string userInput) // You will have to add more conditions for substitute and locate. 
 	{
 		int i, inputNum, signChange=1, temp;
 		
 		for(i=0; i<=userInput.length()-1; i++)
 			{
 				temp=userInput.at(i);
-				if(temp=='-')
+				temp=temp-'0';
+				if(userInput.at(i)=='-')
 					{
 						signChange=-1;
 					}
-				temp=temp-'0';
-				if(temp<=9)
+				else if(temp>=0 and temp<=9)
 					{
 						inputNum=inputNum*10;
 						inputNum=inputNum+temp;
@@ -172,10 +172,6 @@ int Reader(string userInput)
 			}
 		inputNum=inputNum*signChange;
 		
-		if(DEBUG)
-			{
-				cout<<"'Reader' has been called"<<endl;
-			}
 		return inputNum;
 	}
 	
