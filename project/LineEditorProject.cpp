@@ -6,24 +6,22 @@
 // Phoebe Ruggeberg
 // Alex Yang
 
-//THis is a comment
-
 #include <iostream>
 #include <fstream>
 using namespace std;
-const bool DEBUG = false;
+const bool DEBUG = true;
 const int MAX = 100;
 
-int splitToNum(string);
-void Substitute();
-void Type(string[], int, int&); // ASSIGNED TO Cisty
+int Reader(string);
+void Substitute(); // ASSIGNED TO Levi/Atef
+void Type(string[], int, int&); 
 void Copy();
 void Paste();
-void Locate();
-void Insert(string[],int &,int &,int &); // ASSIGNED TO Atef/Levi
-void Delete();
-void Replace();
-void Move(string[],int &,int); // ASSIGNED TO Phoebe/Alex
+void Locate(); // ASSIGNED TO Levi/Atef
+void Insert(string[],int &,int &,int &); 
+void Delete(); // ASSIGNED TO Phoebe/Alex/Cisty
+void Replace(); // ASSIGNED TO Phoebe/Alex/Cisty
+void Move(string[],int &,int); 
 void Quit(string[]);
 void Save(string[]); 
 
@@ -70,18 +68,21 @@ int main() // Main program
 							// as described above. 
 						<<endl;
 						break;
-					case 'S': // if a case has two possible functions
+					case 'S': 
+						Substitute();
+					
+					// if a case has two possible functions	
+						/*
 						inputCharSecond=inputString.at(1); // look at the second letter. 
 						inputCharSecond=toupper(inputCharSecond);
 						if(inputCharSecond=='U')
 							Substitute();
 						if(inputCharSecond=='A')
-							Save(txtFile);
+							Save(txtFile);*/
 						break;
 					case 'T':
-						//cout<<"Value? > ";
 						cin>>type_number;
-						//inputNum=splitToNum(inputString);
+						//inputNum=Reader(inputString);
 						Type(txtFile, type_number, base);
 						break;
 					case 'C':
@@ -94,8 +95,7 @@ int main() // Main program
 						Locate();
 						break;
 					case 'I':
-						//inputNum=splitToNum(inputString);
-						//cout<<"Value? > ";
+						//inputNum=Reader(inputString);
 						cin>>insert_number;
 						Insert(txtFile, insert_number,base,total);
 						break;
@@ -106,11 +106,13 @@ int main() // Main program
 						Replace();
 						break;	
 					case 'M':
-						//inputNum=splitToNum(inputString);
-						//cout<<"Value? > ";
+						//inputNum=Reader(inputString);
 						cin>>move_number;
 						Move(txtFile,base,move_number);	
 						
+						break;
+					case '*': // * saves file to disk
+						Save(txtFile);
 						break;
 					default: // maybe we can add something that 
 						// redirects the user to the 
@@ -123,10 +125,8 @@ int main() // Main program
 						break;	
 				}	
 
-				cout<<"Command? "
-					<<endl;	
+				cout<<"Command? "<<endl;	
 				cin>>inputChar;
-				//cin.ignore(1000,'\n');
 				
 				//inputChar=inputString.at(0);
 				inputChar=toupper(inputChar);	
@@ -152,55 +152,27 @@ int main() // Main program
 ////
 //
 	
-int splitToNum(string userInput)
+int Reader(string userInput)
 	{
-		int i;
-		int inputNum=0;
-		
-		int reader;
-		reader=0;
-		for(i=1;i<=userInput.length()-1;i++)
+		int inputNum;
+	
+		if(DEBUG)
 			{
-				reader*=10;
-				reader+=userInput.at(i)-'0';
-				
+				cout<<"'Split' has been called"<<endl;
 			}
-		inputNum=reader;
-		/*	
-		for(i=0; i<=userInput.length()-1;i++)
-			{
-				userInput.at(i);
-				
-			}
-			/*
-			if(userInput.at(1)=='-')
-				{
-					inputNum*-1;
-				}
-			else if(userInput.at(1)=='')
-			*/
-		cout<<"'Split' has been called"
-		<<endl;
 		return inputNum;
 	}
 	
 void Substitute()
 	{
-		cout<<"'Substitute' has been called. "
-		<<endl;
+		if(DEBUG)
+			{
+				cout<<"'Substitute' has been called. "<<endl;
+			}
 	}
 
 void Type(string txtFile[], int type_number, int&base) 
 	{ 
-		/* //testing zone
-		txtFile[0]="Line zero.";
-		txtFile[1]="Line one.";
-		txtFile[2]="Line two.";
-		txtFile[3]="Line three.";
-		*/
-		
-		//cout<<"'Type' has been called. "
-		//<<endl;
 		int i;
 		for(i=base; i<(base+type_number); i++)
 			{
@@ -211,20 +183,26 @@ void Type(string txtFile[], int type_number, int&base)
 
 void Copy()
 	{
-		cout<<"'Copy' has been called. "
-		<<endl;
+		if(DEBUG)
+			{
+				cout<<"'Copy' has been called. "<<endl;
+			}
 	}
 
 void Paste()
 	{
-		cout<<"'Paste' has been called. "
-		<<endl;
+		if(DEBUG)
+			{
+				cout<<"'Paste' has been called. "<<endl;
+			}
 	}
 
 void Locate()
 	{
-		cout<<"'Locate' has been called. "
-		<<endl;
+		if(DEBUG)
+		{
+			cout<<"'Locate' has been called. "<<endl;
+		}
 	}
 
 void Insert(string txtFile[], int &insert_number, int &base,int &total) 
@@ -241,8 +219,8 @@ void Insert(string txtFile[], int &insert_number, int &base,int &total)
 					getline(cin,txtFile[i]);
 				}
 			base = insert_number+base;
-			
 			total = total + insert_number;
+			
 			if (DEBUG)
 				{
 					cout<<"total = "<<total<<endl;
@@ -252,14 +230,18 @@ void Insert(string txtFile[], int &insert_number, int &base,int &total)
 
 void Delete()
 	{
-		cout<<"'Delete' has been called. "
-		<<endl;
+		if(DEBUG)
+			{
+				cout<<"'Delete' has been called. "<<endl;
+			}
 	}
 
 void Replace()
 	{
-		cout<<"'Replace' has been called. "
-		<<endl;
+		if(DEBUG)
+			{
+				cout<<"'Replace' has been called. "<<endl;
+			}
 	}
 
 void Move(string txtFile[], int &base,int move_number) 
@@ -270,31 +252,40 @@ void Move(string txtFile[], int &base,int move_number)
 			{
 				cout<<"Line: "<<base<<endl;
 			}
+			
 		cout<<"Text from current line: "<<endl<<"> "<<txtFile[base]<<endl;
 	}
 
-void Quit(string txtFile[])
+void Quit(string txtFile[]) // this doesn't work right for some reason. 
 	{
 		char yesNo;
 		
-		cout<<"You have asked to quit, "
-		<<"would you like to save first? "
-		<<endl;
-		
-		cin>>yesNo;
-		cin.ignore(1000,'\n');
-		yesNo=toupper(yesNo);
-		
-		switch(yesNo)
+		yesNo=' ';
+		while(yesNo=='N' or 'Y' or '*')
 			{
-				case 'Y':
-					Save(txtFile);
-					break;
-				case 'S':
-					Save(txtFile);
-					break;
-				case 'N':
-					break;
+				switch(yesNo)
+					{
+						case ' ':
+							cout<<"You have asked to quit, "
+								<<"would you like to save first? "
+								<<endl;
+							break;
+						case 'Y':
+							Save(txtFile);
+							break;
+						case '*':
+							Save(txtFile);
+							break;
+						case 'N':
+							break;
+						default:
+							cout<<"Please enter a valid command. "<<endl;
+							break;
+					}
+					
+				cin>>yesNo;
+				cin.ignore(1000,'\n');
+				yesNo=toupper(yesNo);
 			}
 		cout<<"Have a nice day!"<<endl;	
 		
@@ -304,7 +295,10 @@ void Save(string txtFile[]) // NEEDS SOME WORK
 	// a separate save function 
 	// so that users can save without quitting. 
 	{
-		cout<<"'Save' has been called "
+		if(DEBUG)
+			{
+				cout<<"'Save' has been called "<<endl;
+			}
 		
 		
 		
@@ -312,6 +306,6 @@ void Save(string txtFile[]) // NEEDS SOME WORK
 		// IF ANYONE KNOWS HOW TO DO THIS, DO IT, I DON'T THINK IT'S VERY HARD, 
 		// BUT I LOST MY NOTES. 
 		
-		<<endl;
+		
 	}
 
