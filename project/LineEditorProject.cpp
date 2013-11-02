@@ -9,7 +9,7 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
-const bool DEBUG = true;
+const bool DEBUG = false;
 const int MAX = 100;
 
 int Reader(string);
@@ -39,19 +39,8 @@ void Save(string[]);
 int main() // Main program
 	{
 		string txtFile[MAX];
-		int insert_number = 0; //this is show how many line we will insert in the array. 
-		int base = 0; // this is show where we gonna start the insert in the array and by defult it will statrt from the zero element.
-		int total = 0; // this is show how many lines is in the string array.
-		int move_number;//this will send with the move statment to make the offset for the base_number
-		int type_number;
+		int currentLineIndex=0, total=0, inputNum;
 		
-		//---------------------------------------------
-		// These variables may or may not be used.  
-		//
-		int currentLineIndex, inputNum;
-		//
-		//
-		//---------------------------------------------
 		string inputString;
 		
 		char inputChar;
@@ -81,9 +70,8 @@ int main() // Main program
 							Save(txtFile);*/
 						break;
 					case 'T':
-						//cin>>type_number;
 						inputNum=Reader(inputString);
-						Type(txtFile, inputNum, base);
+						Type(txtFile, inputNum, currentLineIndex);
 						break;
 					case 'C':
 						Copy();	
@@ -96,8 +84,7 @@ int main() // Main program
 						break;
 					case 'I':
 						inputNum=Reader(inputString);
-						//cin>>insert_number;
-						Insert(txtFile, inputNum,base,total);
+						Insert(txtFile, inputNum, currentLineIndex, total);
 						break;
 					case 'D':
 						Delete();
@@ -107,8 +94,7 @@ int main() // Main program
 						break;	
 					case 'M':
 						inputNum=Reader(inputString);
-						//cin>>move_number;
-						Move(txtFile,base,inputNum);	
+						Move(txtFile, currentLineIndex, inputNum);	
 						
 						break;
 					case '*': // * saves file to disk
@@ -183,14 +169,14 @@ void Substitute()
 			}
 	}
 
-void Type(string txtFile[], int type_number, int&base) 
+void Type(string txtFile[], int type_number, int&currentLineIndex) 
 	{ 
 		int i;
-		for(i=base; i<(base+type_number); i++)
+		for(i=currentLineIndex; i<(currentLineIndex+type_number); i++)
 			{
 				cout<<"> "<<txtFile[i]<<endl;
 			}
-		base=base+type_number-1;
+		currentLineIndex=currentLineIndex+type_number-1;
 	}
 
 void Copy()
@@ -217,26 +203,26 @@ void Locate()
 		}
 	}
 
-void Insert(string txtFile[], int &insert_number, int &base,int &total) 
+void Insert(string txtFile[], int &insert_number, int &currentLineIndex,int &total) 
 	{ 
 		int i;
-			for (i=total; i>base; i--)
+			for (i=total; i>currentLineIndex; i--)
 				{
 					txtFile[i+insert_number]=txtFile[i];
 				}
 			cin.ignore(1000,'\n');
-			for(i=base+1; i<=insert_number+base; i++) 
+			for(i=currentLineIndex+1; i<=insert_number+currentLineIndex; i++) 
 				{
 					cout<<"> ";
 					getline(cin,txtFile[i]);
 				}
-			base = insert_number+base;
+			currentLineIndex = insert_number+currentLineIndex;
 			total = total + insert_number;
 			
 			if (DEBUG)
 				{
 					cout<<"total = "<<total<<endl;
-					cout<<"base = "<<base<<endl;
+					cout<<"currentLineIndex = "<<currentLineIndex<<endl;
 				}
 	}
 
@@ -256,49 +242,45 @@ void Replace()
 			}
 	}
 
-void Move(string txtFile[], int &base,int move_number) 
+void Move(string txtFile[], int &currentLineIndex,int move_number) 
 	{
-		base =base+ move_number;
+		currentLineIndex =currentLineIndex+ move_number;
 		
 		if(DEBUG)
 			{
-				cout<<"Line: "<<base<<endl;
+				cout<<"Line: "<<currentLineIndex<<endl;
 			}
 			
-		cout<<"Text from current line: "<<endl<<"> "<<txtFile[base]<<endl;
+		cout<<"Text from current line: "<<endl<<"> "<<txtFile[currentLineIndex]<<endl;
 	}
 
-void Quit(string txtFile[]) // this doesn't work right for some reason. 
+void Quit(string txtFile[])  
 	{
 		char yesNo;
 		
-		yesNo=' ';
-		while(yesNo=='N' or 'Y' or '*')
-			{
-				switch(yesNo)
-					{
-						case ' ':
-							cout<<"You have asked to quit, "
-								<<"would you like to save first? "
-								<<endl;
-							break;
-						case 'Y':
-							Save(txtFile);
-							break;
-						case '*':
-							Save(txtFile);
-							break;
-						case 'N':
-							break;
-						default:
-							cout<<"Please enter a valid command. "<<endl;
-							break;
-					}
-					
-				cin>>yesNo;
-				cin.ignore(1000,'\n');
-				yesNo=toupper(yesNo);
+		cout<<"You have asked to quit, "
+			<<"would you like to save first? "
+			<<endl;
+			
+		cin>>yesNo;
+		cin.ignore(1000,'\n');
+		yesNo=toupper(yesNo);
+		
+		switch(yesNo)
+			{	
+				case 'Y':
+					Save(txtFile);
+					break;
+				case '*':
+					Save(txtFile);
+					break;
+				default:
+					cout<<"Your file has not been saved. "<<endl;
+					break;
 			}
+				
+		
+				
 		cout<<"Have a nice day!"<<endl;	
 		
 	}
@@ -311,7 +293,7 @@ void Save(string txtFile[]) // NEEDS SOME WORK
 			{
 				cout<<"'Save' has been called "<<endl;
 			}
-		
+		cout<<"Your file has been saved. "<<endl;
 		
 		
 		// 'Apply string array to file' routine goes here. 
