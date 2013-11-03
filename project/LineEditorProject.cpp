@@ -9,18 +9,19 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
-const bool DEBUG = false;
+
+const bool DEBUG = true;
 const int MAX = 100;
 
 int Reader(string);
-void Substitute(); // ASSIGNED TO Levi/Atef
+void Substitute(); // ASSIGNED TO Levi/Atef - Difficult
 void Type(string[], int, int&); 
 void Copy();
 void Paste();
-void Locate(); // ASSIGNED TO Levi/Atef
+void Locate(); // ASSIGNED TO Levi/Atef - Somewhat difficult
 void Insert(string[],int &,int &,int &); 
-void Delete(); // ASSIGNED TO Phoebe/Alex/Cisty
-void Replace(); // ASSIGNED TO Phoebe/Alex/Cisty
+void Delete(); // ASSIGNED TO Phoebe/Alex/Cisty - Easiest
+void Replace(); // ASSIGNED TO Phoebe/Alex/Cisty - Still Easy
 void Move(string[],int &,int); 
 void Quit(string[]);
 void Save(string[]); 
@@ -32,6 +33,7 @@ void Save(string[]);
 // Post to Facebook function (can probably be done with PHP)
 // animation things (no idea where to start with this)
 // word count/char count?
+// Redirect to project wiki
 // 
 //  
 ///////////////////////////////////////////////</IDEAS>
@@ -39,7 +41,7 @@ void Save(string[]);
 int main() // Main program
 	{
 		string txtFile[MAX];
-		int currentLineIndex=0, total=0, inputNum;
+		int currentLineIndex=0, total=0, inputValue;
 		
 		string inputString;
 		
@@ -58,6 +60,7 @@ int main() // Main program
 						<<endl;
 						break;
 					case 'S': 
+						inputValue=Reader(inputString);
 						Substitute();
 					
 					// if a case has two possible functions	
@@ -70,8 +73,8 @@ int main() // Main program
 							Save(txtFile);*/
 						break;
 					case 'T':
-						inputNum=Reader(inputString);
-						Type(txtFile, inputNum, currentLineIndex);
+						inputValue=Reader(inputString);
+						Type(txtFile, inputValue, currentLineIndex);
 						break;
 					case 'C':
 						Copy();	
@@ -80,21 +83,24 @@ int main() // Main program
 						Paste();
 						break;
 					case 'L':
+						inputValue=Reader(inputString);
 						Locate();
 						break;
 					case 'I':
-						inputNum=Reader(inputString);
-						Insert(txtFile, inputNum, currentLineIndex, total);
+						inputValue=Reader(inputString);
+						Insert(txtFile, inputValue, currentLineIndex, total);
 						break;
 					case 'D':
+						inputValue=Reader(inputString);
 						Delete();
 						break;	
 					case 'R':
+						inputValue=Reader(inputString);
 						Replace();
 						break;	
 					case 'M':
-						inputNum=Reader(inputString);
-						Move(txtFile, currentLineIndex, inputNum);	
+						inputValue=Reader(inputString);
+						Move(txtFile, currentLineIndex, inputValue);	
 						
 						break;
 					case '*': // * saves file to disk
@@ -138,27 +144,49 @@ int main() // Main program
 ////
 //
 	
-int Reader(string userInput) // You will have to add more conditions for substitute and locate. 
-	{
-		int i, inputNum, signChange=1, temp;
+int Reader(string inputString) // You will have to add more conditions for substitute and locate. 
+	{ // or one for both substitute AND locate... 
+		int i, inputValue, signChange=1, temp;
 		
-		for(i=0; i<=userInput.length()-1; i++)
+		for(i=0; i<=inputString.length()-1; i++)
 			{
-				temp=userInput.at(i);
+				inputString.at(i)=toupper(inputString.at(i));
+				temp=inputString.at(i);
 				temp=temp-'0';
-				if(userInput.at(i)=='-')
+				if(inputString.at(i)=='/')
 					{
-						signChange=-1;
+						if(inputString.at(0)=='S' or inputString.at(0)=='L')
+							{
+								if(DEBUG)
+									{
+										cout<<"IT WORKS. "<<endl;
+									}
+								i=inputString.length();
+							}
+						else
+							{
+								cout<<"Invalid use of '/string/'. "<<endl;
+							}
 					}
-				else if(temp>=0 and temp<=9)
+				else
 					{
-						inputNum=inputNum*10;
-						inputNum=inputNum+temp;
+						if(inputString.at(i)=='-')
+							{
+								signChange=-1;
+							}
+						if(temp>=0 and temp<=9)
+							{
+								inputValue=inputValue*10;
+								inputValue=inputValue+temp;
+							}
 					}
+				
+				
+				
 			}
-		inputNum=inputNum*signChange;
+		inputValue=inputValue*signChange;
 		
-		return inputNum;
+		return inputValue;
 	}
 	
 void Substitute()
@@ -198,9 +226,9 @@ void Paste()
 void Locate()
 	{
 		if(DEBUG)
-		{
-			cout<<"'Locate' has been called. "<<endl;
-		}
+			{
+				cout<<"'Locate' has been called. "<<endl;
+			}
 	}
 
 void Insert(string txtFile[], int &insert_number, int &currentLineIndex,int &total) 
@@ -219,7 +247,7 @@ void Insert(string txtFile[], int &insert_number, int &currentLineIndex,int &tot
 			currentLineIndex = insert_number+currentLineIndex;
 			total = total + insert_number;
 			
-			if (DEBUG)
+			if(DEBUG)
 				{
 					cout<<"total = "<<total<<endl;
 					cout<<"currentLineIndex = "<<currentLineIndex<<endl;
