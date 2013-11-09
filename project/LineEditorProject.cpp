@@ -20,7 +20,7 @@ void Copy();
 void Paste();
 void Locate(); // ASSIGNED TO Levi/Atef - Somewhat difficult
 void Insert(string[],int &,int &,int &); 
-void Delete(); // ASSIGNED TO Phoebe/Alex/Cisty - Easiest
+void Delete(string[], int &, int); // ASSIGNED TO Phoebe/Alex/Cisty - Easiest
 void Replace(); // ASSIGNED TO Phoebe/Alex/Cisty - Still Easy
 void Move(string[],int &,int); 
 void Quit(string[]);
@@ -92,7 +92,7 @@ int main() // Main program
 						break;
 					case 'D':
 						inputValue=Reader(inputString);
-						Delete();
+						Delete(txtFile, currentLineIndex, inputValue);
 						break;	
 					case 'R':
 						inputValue=Reader(inputString);
@@ -254,12 +254,24 @@ void Insert(string txtFile[], int &insert_number, int &currentLineIndex,int &tot
 				}
 	}
 
-void Delete()
+void Delete(string txtFile[], int &currentLineIndex, int delete_number)
 	{
-		if(DEBUG)
+		int i;
+		for(i=currentLineIndex; i<=currentLineIndex+delete_number-1; i++)
 			{
-				cout<<"'Delete' has been called. "<<endl;
+				txtFile[i]="";
 			}
+		if(currentLineIndex+delete_number>=99)
+			currentLineIndex=currentLineIndex-1;
+		else
+			currentLineIndex=currentLineIndex+delete_number;
+		
+		if(DEBUG)
+		{
+			cout<<"currentLineIndex = "<<currentLineIndex<<endl;
+		}
+				
+			
 	}
 
 void Replace()
