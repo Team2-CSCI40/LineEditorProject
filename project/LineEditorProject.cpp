@@ -23,8 +23,8 @@ void Insert(string[],int &,int &,int &);
 void Delete(string[], int &, int); // ASSIGNED TO Phoebe/Alex/Cisty - Easiest
 void Replace(); // ASSIGNED TO Phoebe/Alex/Cisty - Still Easy
 void Move(string[],int &,int); 
-void Quit(string[]);
-void Save(string[]); 
+void Quit(string[], int);
+void Save(string[], int); 
 
 ////////////////////////////////////////////////<IDEAS>
 // // // (Feel free to add to this field)
@@ -57,6 +57,7 @@ int main() // Main program
 					case ' ': 
 						cout<<"Welcome. " // Uses variable initialization, 
 							// as described above. 
+							// Open or create new file? 
 						<<endl;
 						break;
 					case 'S': 
@@ -104,7 +105,7 @@ int main() // Main program
 						
 						break;
 					case '*': // * saves file to disk
-						Save(txtFile);
+						Save(txtFile, total);
 						break;
 					default: // maybe we can add something that 
 						// redirects the user to the 
@@ -124,7 +125,7 @@ int main() // Main program
 				inputChar=toupper(inputChar);	
 			}
 
-			Quit(txtFile); // calls quit function, Y or N to save. 	
+			Quit(txtFile, total); // calls quit function, Y or N to save. 	
 		return 0;
 	}
 	
@@ -195,94 +196,94 @@ void Substitute(string txtfile[MAX],int current_line,string input_string,int tot
 			{
 				cout<<"'Substitute' has been called. "<<endl;
 			}
-			int pos, pos_2, pos_3, pos_old_string, txtfile_length;
-			pos = input_string.find('/');
-			string temp_1, new_string, temp_2, old_string;
-			temp_1 = input_string.substr(pos + 1);
-			pos_2 = temp_1.find('/');
-			old_string = temp_1.substr(0,pos_2);
-			if(DEBUG)
+		int pos, pos_2, pos_3, pos_old_string, txtfile_length;
+		pos = input_string.find('/');
+		string temp_1, new_string, temp_2, old_string;
+		temp_1 = input_string.substr(pos + 1);
+		pos_2 = temp_1.find('/');
+		old_string = temp_1.substr(0,pos_2);
+		if(DEBUG)
+			{
 				cout<<"This is the old string: "<<old_string<<endl;
-			temp_2 = temp_1.substr(pos_2+1);
-			new_string = temp_2.substr(0,temp_2.length()-1);
-			if(DEBUG)
+			}
+		temp_2 = temp_1.substr(pos_2+1);
+		new_string = temp_2.substr(0,temp_2.length()-1);
+		if(DEBUG)
 			{
 				cout<<"This is the new string: "<<new_string<<endl;
 			}
-			int i_for_loop;
-			int new_string_length,old_string_length;
-			old_string_length = old_string.length();
-			new_string_length = new_string.length();
-			bool check;
-			int start_from ;
-			i_for_loop = current_line;
-			//for(i_for_loop = current_line; i_for_loop <= total_line;i_for_loop++)
-			//{
-						start_from = 0;
-						check = true;
-						string the_original_string = txtfile[i_for_loop];
-						if(txtfile[i_for_loop].find(old_string) == -1)//to show if no match string for the old_string.
-						{
-							cout<<"Line number "<< i_for_loop<<":"<<" have no '"<<old_string<<"'"<<endl;
+		int i_for_loop;
+		int new_string_length,old_string_length;
+		old_string_length = old_string.length();
+		new_string_length = new_string.length();
+		bool check;
+		int start_from ;
+		i_for_loop = current_line;
+		start_from = 0;
+		check = true;
+		string the_original_string = txtfile[i_for_loop];
+		if(txtfile[i_for_loop].find(old_string) == -1)//to show if no match string for the old_string.
+			{
+				cout<<"Line number "<< i_for_loop<<":"<<" have no '"<<old_string<<"'"<<endl;
+			}
+		if(txtfile[i_for_loop].empty() == true)//to leave if it empty.
+			{
+				cout<<"Line number "<<i_for_loop<<" is EMPTY."<<endl;
+				check = false;
+			}
+			txtfile_length = txtfile[i_for_loop].length();
+						
+			while(check)
+				{
+					txtfile_length = txtfile[i_for_loop].length();
+					 if(DEBUG)
+					 	{
+							cout<<"This is the string length: "<<txtfile_length<<endl;
 						}
-						if(txtfile[i_for_loop].empty() == true)//to leave if it empty.
-						{
-							cout<<"Line number "<<i_for_loop<<" is EMPTY."<<endl;
-							check = false;
+				 	pos_old_string = txtfile[i_for_loop].find(old_string,start_from);//the position of the old_string in the string.
+				 	if(DEBUG)
+				 		{
+							cout<<"this is the position of old string: "<<pos_old_string<<endl;
 						}
-						txtfile_length = txtfile[i_for_loop].length();
-						//pos_old_string = txtfile[i_for_loop].find(old_string,start_from);
-						//cout<<"the pos_old_string= "<<pos_old_string<<endl;
-						/*if(pos_old_string == -1)
-						{
-							check = false;
-						}*/
-						while(check)
-						{
-					 	txtfile_length = txtfile[i_for_loop].length();
-					 	if(DEBUG)
-					 		{cout<<"This is the string length: "<<txtfile_length<<endl;}
-				 		pos_old_string = txtfile[i_for_loop].find(old_string,start_from);//the position of the old_string in the string.
-				 		if(DEBUG)
-				 			{cout<<"this is the position of old string: "<<pos_old_string<<endl;}
-				 		if(pos_old_string == -1)
-				 			{
-					 			break;
-				 			}
-				 		if(new_string.empty() == true)
+			 		if(pos_old_string == -1)
+			 			{
+				 			break;
+			 			}
+				 	if(new_string.empty() == true)
 				 		{
 					 		txtfile[i_for_loop].replace(pos_old_string,old_string_length,"");
 					 		if(DEBUG)
 					 			cout<<"What happened: "<<txtfile[i_for_loop]<<endl;
 					 		start_from = 0;
 				 		}
-				 		else
-				 		{txtfile[i_for_loop].replace(pos_old_string,old_string_length,new_string);
-				 		if(DEBUG)
-				 			{cout<<"This is the new string: "<<txtfile[i_for_loop]<<endl;}
-					 	//start_from = pos_old_string + old_string_length +1;
-				 		if(txtfile[i_for_loop].at(pos_old_string + new_string_length - 1) == '\0')
+				 	else
 				 		{
-					 		check = false;
-				 		}
-				 		else
-				 		{
-					 		start_from = pos_old_string + new_string_length;
-				 		}
+							txtfile[i_for_loop].replace(pos_old_string,old_string_length,new_string);
+							if(DEBUG)
+								{
+									cout<<"This is the new string: "<<txtfile[i_for_loop]<<endl;
+								}
+							if(txtfile[i_for_loop].at(pos_old_string + new_string_length - 1) == '\0')
+								{
+									check = false;
+								}
+							else
+								{
+									start_from = pos_old_string + new_string_length;
+								}
 			 			}
-				 		if(DEBUG)
-				 		{cout<<"The position of the start_from in the txtfile: "<<start_from<<endl;}
-						}
+						
+						if(DEBUG)
+							{
+								cout<<"The position of the start_from in the txtfile: "<<start_from<<endl;
+							}
+				}			
 						if(txtfile[i_for_loop] != the_original_string)
-						cout<<"This is line number "<<i_for_loop<<" after substiute :" <<txtfile[i_for_loop]<<endl;
-		//}
-				
+							cout<<"Text from current line: "<<endl<<"> "<<txtfile[i_for_loop]<<endl;	
 			if(DEBUG)
-			{
-				cout<<"Position of the first / in the string: "<<pos<<endl;
-				//cout<<"This is show the position of the first letter in the wanted array with the whole string:  "<<pos_2<<"\n"<<temp_1<<endl;
-			}
-			
+				{
+					cout<<"Position of the first / in the string: "<<pos<<endl;
+				}
 	}
 
 
@@ -383,7 +384,7 @@ void Move(string txtFile[], int &currentLineIndex,int move_number)
 		cout<<"Text from current line: "<<endl<<"> "<<txtFile[currentLineIndex]<<endl;
 	}
 
-void Quit(string txtFile[])  
+void Quit(string txtFile[], int total)  
 	{
 		char yesNo;
 		
@@ -398,10 +399,10 @@ void Quit(string txtFile[])
 		switch(yesNo)
 			{	
 				case 'Y':
-					Save(txtFile);
+					Save(txtFile, total);
 					break;
 				case '*':
-					Save(txtFile);
+					Save(txtFile, total);
 					break;
 				default:
 					cout<<"Your file has not been saved. "<<endl;
@@ -414,21 +415,17 @@ void Quit(string txtFile[])
 		
 	}
 
-void Save(string txtFile[]) // NEEDS SOME WORK 
-	// a separate save function 
-	// so that users can save without quitting. 
-	{
-		if(DEBUG)
+void Save(string txtFile[], int total) 
+	{	// a separate save function 
+		// so that users can save without quitting. 
+		int i;
+		ofstream fout;
+		fout.open("file.txt");	
+		for(i=0; i<=total; i++)
 			{
-				cout<<"'Save' has been called "<<endl;
-			}
+				fout<<txtFile[i]<<endl<<endl;
+			}	
 		cout<<"Your file has been saved. "<<endl;
-		
-		
-		// 'Apply string array to file' routine goes here. 
-		// IF ANYONE KNOWS HOW TO DO THIS, DO IT, I DON'T THINK IT'S VERY HARD, 
-		// BUT I LOST MY NOTES. 
-		
-		
+
 	}
 
