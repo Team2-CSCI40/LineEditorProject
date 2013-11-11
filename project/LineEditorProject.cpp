@@ -10,7 +10,7 @@
 #include <fstream>
 using namespace std;
 
-const bool DEBUG = false;
+const bool DEBUG = true;
 const int MAX = 100;
 
 int Reader(string);
@@ -21,7 +21,7 @@ void Paste();
 void Locate(); // ASSIGNED TO Levi/Atef - Somewhat difficult
 void Insert(string[],int &,int &,int &); 
 void Delete(string[], int &, int); // ASSIGNED TO Phoebe/Alex/Cisty - Easiest
-void Replace(); // ASSIGNED TO Phoebe/Alex/Cisty - Still Easy
+void Replace(string[], int &, int); // ASSIGNED TO Phoebe/Alex/Cisty - Still Easy
 void Move(string[],int &,int); 
 void Quit(string[], int);
 void Save(string[], int); 
@@ -57,21 +57,13 @@ int main() // Main program
 					case ' ': 
 						cout<<"Welcome. " // Uses variable initialization, 
 							// as described above. 
-							// Open or create new file? 
+							// Open or create new file?
+							
 						<<endl;
 						break;
 					case 'S': 
 						inputValue=Reader(inputString);
 						Substitute(txtFile,currentLineIndex,inputString,total);
-					
-					// if a case has two possible functions	
-						/*
-						inputCharSecond=inputString.at(1); // look at the second letter. 
-						inputCharSecond=toupper(inputCharSecond);
-						if(inputCharSecond=='U')
-							Substitute();
-						if(inputCharSecond=='A')
-							Save(txtFile);*/
 						break;
 					case 'T':
 						inputValue=Reader(inputString);
@@ -97,7 +89,7 @@ int main() // Main program
 						break;	
 					case 'R':
 						inputValue=Reader(inputString);
-						Replace();
+						Replace(txtFile, currentLineIndex, inputValue);
 						break;	
 					case 'M':
 						inputValue=Reader(inputString);
@@ -145,45 +137,25 @@ int main() // Main program
 ////
 //
 	
-int Reader(string inputString) // You will have to add more conditions for substitute and locate. 
-	{ // or one for both substitute AND locate... 
-		int i, inputValue, signChange=1, temp;
+int Reader(string inputString) 
+	{ 
+		int i, inputValue=0, signChange=1, temp;
 		
 		for(i=0; i<=inputString.length()-1; i++)
 			{
 				inputString.at(i)=toupper(inputString.at(i));
 				temp=inputString.at(i);
 				temp=temp-'0';
-				if(inputString.at(i)=='/')
+					
+				if(inputString.at(i)=='-')
 					{
-						if(inputString.at(0)=='S' or inputString.at(0)=='L')
-							{
-								if(DEBUG)
-									{
-										cout<<"IT WORKS. "<<endl;
-									}
-								i=inputString.length();
-							}
-						else
-							{
-								cout<<"Invalid use of '/string/'. "<<endl;
-							}
+						signChange=-1;
 					}
-				else
-					{
-						if(inputString.at(i)=='-')
-							{
-								signChange=-1;
-							}
-						if(temp>=0 and temp<=9)
-							{
-								inputValue=inputValue*10;
-								inputValue=inputValue+temp;
-							}
-					}
-				
-				
-				
+				if(temp>=0 and temp<=9)
+					{	
+						inputValue=inputValue*10;
+						inputValue=inputValue+temp;
+					}	
 			}
 		inputValue=inputValue*signChange;
 		
@@ -290,9 +262,18 @@ void Substitute(string txtfile[MAX],int current_line,string input_string,int tot
 void Type(string txtFile[], int type_number, int&currentLineIndex) 
 	{ 
 		int i;
+		int tertiaryCounter=0;
 		for(i=currentLineIndex; i<(currentLineIndex+type_number); i++)
 			{
+				tertiaryCounter++;
+				if(currentLineIndex+tertiaryCounter-1>=MAX)
+					{
+						cout<<"You have reached the end of the file. "<<endl;
+						break;
+					}	
+				
 				cout<<"> "<<txtFile[i]<<endl;
+				
 			}
 		currentLineIndex=currentLineIndex+type_number-1;
 	}
@@ -323,19 +304,48 @@ void Locate()
 
 void Insert(string txtFile[], int &insert_number, int &currentLineIndex,int &total) 
 	{ 
-		int i;
-			for (i=total; i>currentLineIndex; i--)
+		int i, tertiaryCounter=0;
+		/*
+			tertiaryCounter++;
+				if(currentLineIndex+tertiaryCounter-1>=MAX)
+					{
+						cout<<"You have reached the end of the file. "<<endl;
+						break;
+					}	
+		*/
+			for(i=total; i>currentLineIndex; i--)
 				{
 					txtFile[i+insert_number]=txtFile[i];
+					tertiaryCounter++;
+					if(currentLineIndex+tertiaryCounter-1>=MAX)
+						{
+							break;
+						}	
 				}
+				
+			tertiaryCounter=0;
+			
 			cin.ignore(1000,'\n');
 			for(i=currentLineIndex+1; i<=insert_number+currentLineIndex; i++) 
 				{
+					tertiaryCounter++;
+					if(currentLineIndex+tertiaryCounter-1>=MAX)
+						{
+							cout<<"You have reached the end of the file. "<<endl;
+							break;
+						}	
 					cout<<"> ";
 					getline(cin,txtFile[i]);
 				}
-			currentLineIndex = insert_number+currentLineIndex;
 			total = total + insert_number;
+			
+			currentLineIndex = insert_number+currentLineIndex;
+			cout<<"the current line"<<currentLineIndex<<endl;
+			
+			if(currentLineIndex>=MAX-1)
+				{
+					currentLineIndex = 99;					
+				}
 			
 			if(DEBUG)
 				{
@@ -351,7 +361,7 @@ void Delete(string txtFile[], int &currentLineIndex, int delete_number)
 			{
 				txtFile[i]="";
 			}
-		if(currentLineIndex+delete_number>=99)
+		if(currentLineIndex+delete_number-1>=99)
 			currentLineIndex=currentLineIndex-1;
 		else
 			currentLineIndex=currentLineIndex+delete_number;
@@ -364,8 +374,18 @@ void Delete(string txtFile[], int &currentLineIndex, int delete_number)
 			
 	}
 
-void Replace()
+void Replace(string txtFile[], int &currentLineIndex, int replace_number)
 	{
+		int i;
+		cin.ignore(1000,'\n');
+		for(i=currentLineIndex; i<=currentLineIndex+replace_number-1; i++)
+			{
+				cout<<"> ";
+				getline(cin,txtFile[i]);
+			}
+			
+			currentLineIndex=currentLineIndex+replace_number-1;
+		
 		if(DEBUG)
 			{
 				cout<<"'Replace' has been called. "<<endl;
@@ -421,9 +441,10 @@ void Save(string txtFile[], int total)
 		int i;
 		ofstream fout;
 		fout.open("file.txt");	
-		for(i=0; i<=total; i++)
+		for(i=1; i<=total; i++)
 			{
-				fout<<txtFile[i]<<endl<<endl;
+				fout<<txtFile[i];
+				fout<<"\n";
 			}	
 		cout<<"Your file has been saved. "<<endl;
 
