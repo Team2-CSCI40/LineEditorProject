@@ -14,16 +14,17 @@ const bool DEBUG = true;
 const int MAX = 100;
 
 int Reader(string);
-void Substitute(string [], int, string,int); // ASSIGNED TO Levi/Atef - Difficult
+void Substitute(string [], int, string,int); 
 void Type(string[], int, int&); 
 void Copy();
 void Paste();
 void Locate(); // ASSIGNED TO Levi/Atef - Somewhat difficult
 void Insert(string[],int &,int &,int &); 
-void Delete(string[], int &, int); // ASSIGNED TO Phoebe/Alex/Cisty - Easiest
-void Replace(string[], int &, int); // ASSIGNED TO Phoebe/Alex/Cisty - Still Easy
+void Delete(string[], int &, int); 
+void Replace(string[], int &, int); 
 void Move(string[],int &,int); 
 void Quit(string[], int);
+void Open(string[], int);
 void Save(string[], int); 
 
 ////////////////////////////////////////////////<IDEAS>
@@ -46,7 +47,7 @@ int main() // Main program
 		string inputString;
 		
 		char inputChar;
-		char inputCharSecond;
+		char openCreateInput;
 		
 		inputChar=' '; // Initializes variable as a space, 
 			// uses ' ' to welcome the user in switch. 
@@ -55,11 +56,16 @@ int main() // Main program
 				switch(inputChar)
 				{
 					case ' ': 
-						cout<<"Welcome. " // Uses variable initialization, 
-							// as described above. 
-							// Open or create new file?
-							
-						<<endl;
+						cout<<"Welcome. \n" 
+							<<"Would you like to open an existing file? "
+							<<endl;
+						cin>>openCreateInput;
+						openCreateInput=toupper(openCreateInput);
+						cin.ignore(1000, '\n');
+						if(openCreateInput='Y')
+							{
+								Open(txtFile, total); // Total is sent in because it may be altered if there is content in the file. 
+							}
 						break;
 					case 'S': 
 						inputValue=Reader(inputString);
@@ -98,6 +104,7 @@ int main() // Main program
 						break;
 					case '*': // * saves file to disk
 						Save(txtFile, total);
+						cin.ignore(1000, '\n');////////////////////////////////////////////////////////////////////////////////////////////
 						break;
 					default: // maybe we can add something that 
 						// redirects the user to the 
@@ -262,11 +269,11 @@ void Substitute(string txtfile[MAX],int current_line,string input_string,int tot
 void Type(string txtFile[], int type_number, int&currentLineIndex) 
 	{ 
 		int i;
-		int tertiaryCounter=0;
+		int otherCounter=0;
 		for(i=currentLineIndex; i<(currentLineIndex+type_number); i++)
 			{
-				tertiaryCounter++;
-				if(currentLineIndex+tertiaryCounter-1>=MAX)
+				otherCounter++;
+				if(currentLineIndex+otherCounter-1>=MAX)
 					{
 						cout<<"You have reached the end of the file. "<<endl;
 						break;
@@ -304,10 +311,10 @@ void Locate()
 
 void Insert(string txtFile[], int &insert_number, int &currentLineIndex,int &total) 
 	{ 
-		int i, tertiaryCounter=0;
+		int i, otherCounter=0;
 		/*
-			tertiaryCounter++;
-				if(currentLineIndex+tertiaryCounter-1>=MAX)
+			otherCounter++;
+				if(currentLineIndex+otherCounter-1>=MAX)
 					{
 						cout<<"You have reached the end of the file. "<<endl;
 						break;
@@ -316,20 +323,20 @@ void Insert(string txtFile[], int &insert_number, int &currentLineIndex,int &tot
 			for(i=total; i>currentLineIndex; i--)
 				{
 					txtFile[i+insert_number]=txtFile[i];
-					tertiaryCounter++;
-					if(currentLineIndex+tertiaryCounter-1>=MAX)
+					otherCounter++;
+					if(currentLineIndex+otherCounter-1>=MAX)
 						{
 							break;
 						}	
 				}
 				
-			tertiaryCounter=0;
+			otherCounter=0;
 			
 			cin.ignore(1000,'\n');
 			for(i=currentLineIndex+1; i<=insert_number+currentLineIndex; i++) 
 				{
-					tertiaryCounter++;
-					if(currentLineIndex+tertiaryCounter-1>=MAX)
+					otherCounter++;
+					if(currentLineIndex+otherCounter-1>=MAX)
 						{
 							cout<<"You have reached the end of the file. "<<endl;
 							break;
@@ -435,6 +442,14 @@ void Quit(string txtFile[], int total)
 		
 	}
 
+void Open(string txtFile[], int total)
+	{
+		if(DEBUG)
+			{
+				cout<<"Open has been called. "<<endl;
+			}
+	}
+	
 void Save(string txtFile[], int total) 
 	{	// a separate save function 
 		// so that users can save without quitting. 
