@@ -10,7 +10,7 @@
 #include <fstream>
 using namespace std;
 
-const bool DEBUG = true;
+const bool DEBUG = false;
 const int MAX = 100;
 
 int Reader(string);
@@ -211,59 +211,59 @@ void Substitute(string txtfile[], int current_line, string input_string)
 				cout<<"Line number "<<i_for_loop<<" is empty."<<endl;
 				check = false;
 			}
-			txtfile_length = txtfile[i_for_loop].length();
-						
-			while(check)
-				{
-					txtfile_length = txtfile[i_for_loop].length();
-					if(DEBUG)
-					 	{
-							cout<<"This is the string length: "<<txtfile_length<<endl;
-						}
-				 	pos_old_string = txtfile[i_for_loop].find(old_string,start_from);//the position of the old_string in the string.
-				 	if(DEBUG)
-				 		{
-							cout<<"this is the position of old string: "<<pos_old_string<<endl;
-						}
-			 		if(pos_old_string == -1) // bool instead of break else
-			 			{
-				 			break; // CANNOT USE BREAK. 
-			 			}
-				 	if(new_string.empty())
-				 		{
-					 		txtfile[i_for_loop].replace(pos_old_string,old_string_length,"");
-					 		if(DEBUG)
-					 			cout<<"What happened: "<<txtfile[i_for_loop]<<endl;
-					 		start_from = 0;
-				 		}
-				 	else
-				 		{
-							txtfile[i_for_loop].replace(pos_old_string,old_string_length,new_string);
-							if(DEBUG)
-								{
-									cout<<"This is the new string: "<<txtfile[i_for_loop]<<endl;
-								}
-							if(txtfile[i_for_loop].at(pos_old_string + new_string_length - 1) == '\0')
-								{
-									check = false;
-								}
-							else
-								{
-									start_from = pos_old_string + new_string_length;
-								}
-			 			}
-						
+		txtfile_length = txtfile[i_for_loop].length();
+				
+		while(check)
+			{
+				txtfile_length = txtfile[i_for_loop].length();
+				if(DEBUG)
+				 	{
+						cout<<"This is the string length: "<<txtfile_length<<endl;
+					}
+			 	pos_old_string = txtfile[i_for_loop].find(old_string,start_from);//the position of the old_string in the string.
+			 	if(DEBUG)
+			 		{
+						cout<<"this is the position of old string: "<<pos_old_string<<endl;
+					}
+		 		if(pos_old_string == -1) // bool instead of break else
+		 			{
+			 			break; // CANNOT USE BREAK. 
+		 			}
+			 	if(new_string.empty())
+			 		{
+				 		txtfile[i_for_loop].replace(pos_old_string,old_string_length,"");
+				 		if(DEBUG)
+				 			cout<<"What happened: "<<txtfile[i_for_loop]<<endl;
+				 		start_from = 0;
+			 		}
+			 	else
+			 		{
+						txtfile[i_for_loop].replace(pos_old_string,old_string_length,new_string);
 						if(DEBUG)
 							{
-								cout<<"The position of the start_from in the txtfile: "<<start_from<<endl;
+								cout<<"This is the new string: "<<txtfile[i_for_loop]<<endl;
 							}
-				}			
-						if(txtfile[i_for_loop] != the_original_string)
-							cout<<"Text from current line: "<<endl<<"> "<<txtfile[i_for_loop]<<endl;	
-			if(DEBUG)
-				{
-					cout<<"Position of the first / in the string: "<<pos<<endl;
-				}
+						if(txtfile[i_for_loop].at(pos_old_string + new_string_length - 1) == '\0')
+							{
+								check = false;
+							}
+						else
+							{
+								start_from = pos_old_string + new_string_length;
+							}
+		 			}
+					
+					if(DEBUG)
+						{
+							cout<<"The position of the start_from in the txtfile: "<<start_from<<endl;
+						}
+			}			
+		if(txtfile[i_for_loop] != the_original_string)
+			cout<<"Text from current line: "<<endl<<"> "<<txtfile[i_for_loop]<<endl;	
+		if(DEBUG)
+			{
+				cout<<"Position of the first / in the string: "<<pos<<endl;
+			}
 	}
 
 
@@ -304,7 +304,7 @@ void Paste()
 
 void Locate(string txtFile[], string inputString, int &currentLineIndex)
 	{
-		int firstPosition, secondPosition, found;
+		int firstPosition, secondPosition, found, i=currentLineIndex;
 		string tempOne, searchString;
 		
 		firstPosition = inputString.find('/');
@@ -315,21 +315,24 @@ void Locate(string txtFile[], string inputString, int &currentLineIndex)
 	
 		found = -1;
 		
-		while(found == -1 and currentLineIndex<=99)
+		while(found == -1 and i<=99)
 			{
-				currentLineIndex++;
-				found=txtFile[currentLineIndex].find(searchString);
+				i++;
+				found=txtFile[i].find(searchString);
 			}
 			
 		if(found == -1)
 			{
 				cout<<"No instance of "<<searchString<<" was found. "<<endl;
 			}
-		
+		else 
+			{
+				currentLineIndex=currentLineIndex+i-1;
+			}
+		cout<<"> "<<txtFile[currentLineIndex]<<endl;
 		if(DEBUG)
 			{
-				cout<<"Search string was: "<<searchString<<". "<<endl;
-				cout<<"> "<<txtFile[currentLineIndex]<<endl;		
+				cout<<"Search string was: "<<searchString<<". "<<endl;		
 			}
 	}
 
