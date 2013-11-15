@@ -10,7 +10,7 @@
 #include <fstream>
 using namespace std;
 
-const bool DEBUG = true;
+const bool DEBUG = false;
 const int MAX = 100;
 
 int Reader(string);
@@ -18,7 +18,7 @@ void Substitute(string [], int, string);
 void Type(string[], int, int&); 
 void Copy();
 void Paste();
-void Locate(string[], string, int&); // ASSIGNED TO Levi/Atef - Somewhat difficult //find while and if
+void Locate(string[], string, int&, int); // ASSIGNED TO Levi/Atef - Somewhat difficult //find while and if
 void Insert(string[],int ,int &,int &); 
 void Delete(string[], int &, int, int &); 
 void Replace(string[], int &, int); 
@@ -84,7 +84,7 @@ int main() // Main program
 						break;
 					case 'L':
 						inputValue=Reader(inputString);
-						Locate(txtFile, inputString, currentLineIndex);
+						Locate(txtFile, inputString, currentLineIndex, total);
 						break;
 					case 'I':
 						inputValue=Reader(inputString);
@@ -196,7 +196,7 @@ void Substitute(string txtfile[], int current_line, string input_string)
 		int new_string_length,old_string_length;
 		old_string_length = old_string.length();
 		new_string_length = new_string.length();
-		bool check,found=true;
+		bool check;
 		int start_from ;
 		i_for_loop = current_line;
 		start_from = 0;
@@ -213,7 +213,7 @@ void Substitute(string txtfile[], int current_line, string input_string)
 			}
 		txtfile_length = txtfile[i_for_loop].length();
 				
-		while(check and found)
+		while(check)
 			{
 				txtfile_length = txtfile[i_for_loop].length();
 				if(DEBUG)
@@ -227,39 +227,36 @@ void Substitute(string txtfile[], int current_line, string input_string)
 					}
 		 		if(pos_old_string == -1) // bool instead of break else
 		 			{
-			 			found = false; // CANNOT USE BREAK. 
+			 			break; // CANNOT USE BREAK. 
 		 			}
-				else
-					{
-						if(new_string.empty())
+			 	if(new_string.empty())
+			 		{
+				 		txtfile[i_for_loop].replace(pos_old_string,old_string_length,"");
+				 		if(DEBUG)
+				 			cout<<"What happened: "<<txtfile[i_for_loop]<<endl;
+				 		start_from = 0;
+			 		}
+			 	else
+			 		{
+						txtfile[i_for_loop].replace(pos_old_string,old_string_length,new_string);
+						if(DEBUG)
 							{
-								txtfile[i_for_loop].replace(pos_old_string,old_string_length,"");
-								if(DEBUG)
-									cout<<"What happened: "<<txtfile[i_for_loop]<<endl;
-								start_from = 0;
+								cout<<"This is the new string: "<<txtfile[i_for_loop]<<endl;
+							}
+						if(txtfile[i_for_loop].at(pos_old_string + new_string_length - 1) == '\0')
+							{
+								check = false;
 							}
 						else
 							{
-								txtfile[i_for_loop].replace(pos_old_string,old_string_length,new_string);
-								if(DEBUG)
-									{
-										cout<<"This is the new string: "<<txtfile[i_for_loop]<<endl;
-									}
-								if(txtfile[i_for_loop].at(pos_old_string + new_string_length - 1) == '\0')
-									{
-										check = false;
-									}
-								else
-									{
-										start_from = pos_old_string + new_string_length;
-									}
+								start_from = pos_old_string + new_string_length;
 							}
-							
-							if(DEBUG)
-								{
-									cout<<"The position of the start_from in the txtfile: "<<start_from<<endl;
-								}
-					}
+		 			}
+					
+					if(DEBUG)
+						{
+							cout<<"The position of the start_from in the txtfile: "<<start_from<<endl;
+						}
 			}			
 		if(txtfile[i_for_loop] != the_original_string)
 			cout<<"Text from current line: "<<endl<<"> "<<txtfile[i_for_loop]<<endl;	
@@ -305,7 +302,7 @@ void Paste()
 			}
 	}
 
-void Locate(string txtFile[], string inputString, int &currentLineIndex)
+void Locate(string txtFile[], string inputString, int &currentLineIndex, int total)
 	{
 		int firstPosition, secondPosition, found, i=currentLineIndex;
 		string tempOne, searchString;
@@ -318,7 +315,7 @@ void Locate(string txtFile[], string inputString, int &currentLineIndex)
 	
 		found = -1;
 		
-		while(found == -1 and i<=99)
+		while(found == -1 and i<=total)
 			{
 				i++;
 				found=txtFile[i].find(searchString);
@@ -330,7 +327,7 @@ void Locate(string txtFile[], string inputString, int &currentLineIndex)
 			}
 		else 
 			{
-				currentLineIndex=currentLineIndex+i-1;
+				currentLineIndex=i;
 			}
 		cout<<"> "<<txtFile[currentLineIndex]<<endl;
 		if(DEBUG)
@@ -341,21 +338,49 @@ void Locate(string txtFile[], string inputString, int &currentLineIndex)
 
 void Insert(string txtFile[], int insert_number, int &currentLineIndex,int &total) 
 	{ 
-		int i;
-			for(i=total-1; i>=currentLineIndex-1; i--)
+		int i, otherCounter=0;
+		/*
+			otherCounter++;
+				if(currentLineIndex+otherCounter-1>=MAX)
+					{
+						cout<<"You have reached the end of the file. "<<endl;
+						break;
+					}	
+		*/
+			for(i=total; i>currentLineIndex; i--)
 				{
 					txtFile[i+insert_number]=txtFile[i];
+					otherCounter++;
+					/*if(currentLineIndex+otherCounter-1>=MAX)
+						{
+							break;
+						}*/
 				}
+				
+			otherCounter=0;
+			
 			//cin.ignore(1000,'\n');
 			for(i=currentLineIndex+1; i<=insert_number+currentLineIndex; i++) 
 				{
+					//otherCounter++;
+					/*if(currentLineIndex+otherCounter-1>=MAX)
+						{
+							cout<<"You have reached the end of the file. "<<endl;
+							break;
+						}*/
 					cout<<"> ";
 					getline(cin,txtFile[i]);
 				}
 			total = total + insert_number;
 			
 			currentLineIndex = insert_number+currentLineIndex;
-
+			//cout<<"the current line"<<currentLineIndex<<endl;
+			/*
+			if(currentLineIndex>=MAX-1)
+				{
+					currentLineIndex = 99;					
+				}
+			*/
 			if(DEBUG)
 				{
 					cout<<"total = "<<total<<endl;
@@ -369,14 +394,14 @@ void Delete(string txtFile[], int &currentLineIndex, int delete_number, int&tota
 		total=total-delete_number;
 		for(i=currentLineIndex; i<=currentLineIndex+delete_number-1; i++)
 			{
-				txtFile[i]=txtFile[i-delete_number];
+				txtFile[i]=txtFile[i+delete_number];
 			}
 		/*	
 		if(currentLineIndex+delete_number-1>=MAX-1) // if lines all the way up to 99 are deleted
 				currentLineIndex=currentLineIndex-1; // 
 		
 		else*/
-			currentLineIndex=currentLineIndex+delete_number;
+			//currentLineIndex=currentLineIndex+delete_number;
 		
 		while(txtFile[currentLineIndex]=="" and currentLineIndex>=2) // if no lines, will default to line 1
 			{
@@ -390,7 +415,8 @@ void Delete(string txtFile[], int &currentLineIndex, int delete_number, int&tota
 			cout<<"total = "<<total<<endl;
 		}
 				
-			
+				
+				
 	}
 
 void Replace(string txtFile[], int &currentLineIndex, int replace_number)
@@ -445,10 +471,8 @@ void Quit(string txtFile[], int total)
 					break;
 				case 'S':
 					Save(txtFile, total);
-					break;
 				case 'N':
 					cout<<"Your file HAS NOT been saved. "<<endl;
-					break;
 				default:
 					break;
 			}
