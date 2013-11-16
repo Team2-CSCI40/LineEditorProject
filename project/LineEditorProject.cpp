@@ -15,7 +15,8 @@ const int MAX = 100;
 
 struct file 
 	{
-		string contents[MAX-1];
+		string contents[MAX]; // segmentation fault w/ some values subtracted from MAX...
+		string fileName;
 		int currentLineIndex;
 		int total;
 	};
@@ -31,7 +32,7 @@ void Delete(file &, int);
 void Replace(file &, int); 
 void Move(file &, int); 
 void Quit(file);
-void Open(file);
+void Open(file &);
 void Save(file); 
 
 
@@ -54,15 +55,9 @@ int main() // Main program
 		file txtFile;
 		txtFile.currentLineIndex=-1;
 		txtFile.total=0;
-		
-		
-		
-		int inputValue;
-		
+		int inputValue=0;
 		string inputString;
-		
 		char inputChar;
-		char openCreateInput;
 		
 		inputChar=' '; // Initializes variable as a space, 
 			// uses ' ' to welcome the user in switch. 
@@ -72,16 +67,7 @@ int main() // Main program
 				{
 					case ' ': 
 						cout<<"Welcome. \n";
-						/*cout<<"Would you like to open an existing file? "
-							<<endl;
-						cin>>openCreateInput;
-						//cin.getline();
-						openCreateInput=toupper(openCreateInput);
-						cin.ignore(1000, '\n');
-						if(openCreateInput='Y')
-							{
-								Open(txtFile, total); // Total is sent in because it may be altered if there is content in the file. 
-							}*/
+						Open(txtFile);
 						break;
 					case 'S': 
 						inputValue=NumberInputReader(inputString);
@@ -167,7 +153,7 @@ int main() // Main program
 ////
 //
 	
-int NumberInputReader(string inputString) 
+int NumberInputReader(string inputString) // Reads the number value input from input string
 	{ 
 		int i, inputValue=0, signChange=1, temp;
 		
@@ -326,30 +312,28 @@ void Locate(file &txtFile, string inputString)
 
 void Insert(file &txtFile, int insert_number) 
 	{ 
-		int i, otherCounter=0;
-			
-			if(txtFile.total==0)
-				{
-					txtFile.currentLineIndex=-1;
-				}
-			
+		int i;
 		
-			for(i=txtFile.total; i>=txtFile.currentLineIndex; i--)
-				{
-					txtFile.contents[i+insert_number]=txtFile.contents[i];
-				}
-				
-			otherCounter=0;
-				
-			for(i=txtFile.currentLineIndex+1; i<=insert_number+txtFile.currentLineIndex; i++) 
-				{
-					cout<<"> ";
-					getline(cin,txtFile.contents[i]);
-				}
-			txtFile.total = txtFile.total + insert_number;
+		if(txtFile.total==0)
+			{
+				txtFile.currentLineIndex=-1;
+			}
+	
+		for(i=txtFile.total; i>=txtFile.currentLineIndex; i--)
+			{
+				txtFile.contents[i+insert_number]=txtFile.contents[i];
+			}
+		
+		for(i=txtFile.currentLineIndex+1; i<=insert_number+txtFile.currentLineIndex; i++) 
+			{
+				cout<<"> ";
+				getline(cin,txtFile.contents[i]);
+			}
 			
-			txtFile.currentLineIndex = insert_number + txtFile.currentLineIndex;
-			
+		txtFile.total = txtFile.total + insert_number;
+		
+		txtFile.currentLineIndex = insert_number + txtFile.currentLineIndex;
+				
 	}
 
 void Delete(file &txtFile, int delete_number)
@@ -374,7 +358,7 @@ void Delete(file &txtFile, int delete_number)
 				txtFile.currentLineIndex--;
 			}
 			
-		if
+		//if
 		// actual lines deleted variable... 
 		/*if(txtFile.total-realLinesDeleted<=0)
 			{
@@ -425,18 +409,18 @@ void Move(file &txtFile, int move_number)
 
 void Quit(file txtFile)  
 	{
-		char yesNo;
+		string yesNo;
+		char yesNoTemp;
 		
 		cout<<"You have asked to quit, "
 			<<"would you like to save first? "
 			<<endl;
 			
-		cin>>yesNo;
-		//cin.getline();
-		//cin.ignore(1000,'\n');
-		yesNo=toupper(yesNo);
+		getline(cin, yesNo);
+		yesNoTemp=yesNo.at(0);
+		yesNoTemp=toupper(yesNoTemp);
 		
-		switch(yesNo)
+		switch(yesNoTemp)
 			{	
 				case 'Y':
 					Save(txtFile);
@@ -454,25 +438,50 @@ void Quit(file txtFile)
 		cout<<"Have a nice day!"<<endl;	
 	}
 
-void Open(file txtFile)
+void Open(file &txtFile)
 	{
-		if(DEBUG)
+		string openYN;
+		char openYNtemp;
+		
+		cout<<"Would you like to open an existing file? "
+			<<endl;
+		getline(cin, openYN);
+		openYNtemp=openYN.at(0);
+		openYNtemp=toupper(openYNtemp);
+		
+		switch(openYNtemp)
 			{
-				cout<<"Open has been called. "<<endl;
+				case 'Y':
+					cout<<"Yes"<<endl;
+					// Load content into array (while loop w/ counter)
+						// While not at end of file
+							// i++
+					// Remember to alter total
+					break;
+				default:
+					cout<<"A new file will be created. "<<endl
+						<<"Please enter the name of this new file. "<<endl
+						<<"> ";
+					getline(cin, txtFile.fileName);
+					break;
 			}
 	}
 	
 void Save(file txtFile) 
 	{	// a separate save function 
 		// so that users can save without quitting. 
+		
 		int i;
+		
 		ofstream fout;
-		fout.open("file.txt");	
+		fout.open(txtFile.fileName.c_str());
+		
 		for(i=0; i<=txtFile.total; i++)
 			{
 				fout<<txtFile.contents[i];
 				fout<<"\n";
 			}	
+			
 		cout<<"Your file HAS been saved. "<<endl;
 
 	}
