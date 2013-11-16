@@ -15,7 +15,7 @@ const int MAX = 100;
 
 struct file 
 	{
-		string contents[MAX-2]; // segmentation fault w/ some values subtracted from MAX...
+		string contents[MAX-1]; // segmentation fault w/ some values subtracted from MAX...
 		string fileName;
 		int currentLineIndex;
 		int total;
@@ -24,8 +24,8 @@ struct file
 int NumberInputReader(string);
 void Substitute(file&, string); 
 void Type(file&, int); 
-void Copy();
-void Paste();
+void Copy(file, string&, int);
+void Paste(file&, string, int);
 void Locate(file &, string); 
 void Insert(file &, int); 
 void Delete(file &, int); 
@@ -33,6 +33,7 @@ void Replace(file &, int);
 void Move(file &, int); 
 void Quit(file);
 void Open(file &);
+void New(file &);
 void Save(file); 
 
 
@@ -55,8 +56,8 @@ int main() // Main program
 		file txtFile;
 		txtFile.currentLineIndex=-1;
 		txtFile.total=0;
-		int inputValue=0;
-		string inputString, openYN;
+		int inputValue=0, copyNumber;
+		string inputString, openYN, copyQue[copyNumber];
 		char inputChar, openYNtemp;
 		
 		cout<<"Welcome. \n";
@@ -68,23 +69,23 @@ int main() // Main program
 				switch(inputChar)
 				{
 					case ' ': 
-						cout<<"Would you like to open an existing file? "
-							<<endl;
-						getline(cin, openYN);
-						openYNtemp=openYN.at(0);
-						openYNtemp=toupper(openYNtemp);
-						
-						switch(openYNtemp)
+						if(not DEBUG)
 							{
-								case 'Y':
-									Open(txtFile);
-									break;
-								default:
-									cout<<"A new file will be created. "<<endl
-										<<"Please enter the name of this new file. "<<endl
-										<<"> ";
-									getline(cin, txtFile.fileName);
-									break;
+								cout<<"Would you like to open an existing file? "
+									<<endl;
+								getline(cin, openYN);
+								openYNtemp=openYN.at(0);
+								openYNtemp=toupper(openYNtemp);
+								
+								switch(openYNtemp)
+									{
+										case 'Y':
+											Open(txtFile);
+											break;
+										default:
+											New(txtFile);
+											break;
+									}
 							}
 						break;
 					case 'S': 
@@ -96,10 +97,12 @@ int main() // Main program
 						Type(txtFile, inputValue);
 						break;
 					case 'C':
-						Copy();	
+						copyNumber=NumberInputReader(inputString); // Special case for copy, 
+							// because it is used again with paste. 
+						Copy(txtFile, copyQue[copyNumber], copyNumber);	
 						break;
 					case 'P':
-						Paste();
+						Paste(txtFile, copyQue[copyNumber], copyNumber);
 						break;
 					case 'L':
 						inputValue=NumberInputReader(inputString);
@@ -123,6 +126,9 @@ int main() // Main program
 						break;
 					case 'O':
 						Open(txtFile);
+						break;
+					case 'N':
+						New(txtFile);
 						break;
 					case '*': // * saves file to disk
 						Save(txtFile);
@@ -214,11 +220,12 @@ void Substitute(file &txtFile, string input_string)
 		int new_string_length,old_string_length;
 		old_string_length = old_string.length();
 		new_string_length = new_string.length();
-		bool check;
+		bool check, exit;
 		int start_from ;
 		i_for_loop = txtFile.currentLineIndex;
 		start_from = 0;
 		check = true;
+		exit = false;
 		string the_original_string = txtFile.contents[i_for_loop];
 		if(txtFile.contents[i_for_loop].find(old_string) == -1)//to show if no match string for the old_string.
 			{
@@ -231,40 +238,37 @@ void Substitute(file &txtFile, string input_string)
 			}
 		txtfile_length = txtFile.contents[i_for_loop].length();
 				
-		while(check)
+		while(check and not exit)
 			{
 				txtfile_length = txtFile.contents[i_for_loop].length();
 				
 			 	pos_old_string = txtFile.contents[i_for_loop].find(old_string,start_from);
 					//the position of the old_string in the string.
 				
-		 		if(pos_old_string == -1) // bool instead of break else
+		 		if(pos_old_string == -1) 
 		 			{
-			 			break; // CANNOT USE BREAK. 
+			 			exit=true;
 		 			}
-			 	if(new_string.empty())
-			 		{
-				 		txtFile.contents[i_for_loop].replace(pos_old_string,old_string_length,"");
-				 		if(DEBUG)
-				 			cout<<"What happened: "<<txtFile.contents[i_for_loop]<<endl;
-				 		start_from = 0;
-			 		}
-			 	else
-			 		{
-						txtFile.contents[i_for_loop].replace(pos_old_string,old_string_length,new_string);
-						if(DEBUG)
+				else
+					{
+						if(new_string.empty())
 							{
-								cout<<"This is the new string: "<<txtFile.contents[i_for_loop]<<endl;
-							}
-						if(txtFile.contents[i_for_loop].at(pos_old_string + new_string_length - 1) == '\0')
-							{
-								check = false;
+								txtFile.contents[i_for_loop].replace(pos_old_string,old_string_length,"");
+								start_from = 0;
 							}
 						else
 							{
-								start_from = pos_old_string + new_string_length;
+								txtFile.contents[i_for_loop].replace(pos_old_string,old_string_length,new_string);
+								if(txtFile.contents[i_for_loop].at(pos_old_string + new_string_length - 1) == '\0')
+									{
+										check = false;
+									}
+								else
+									{
+										start_from = pos_old_string + new_string_length;
+									}
 							}
-		 			}
+					}
 			}			
 		if(txtFile.contents[i_for_loop] != the_original_string)
 			cout<<"Text from current line: "<<endl<<"> "<<txtFile.contents[i_for_loop]<<endl;	
@@ -285,20 +289,28 @@ void Type(file &txtFile, int type_number)
 		
 	}
 
-void Copy()
+void Copy(file txtFile, string &copyQue, int copyNumber)
 	{
-		if(DEBUG)
-			{
-				cout<<"'Copy' has been called. "<<endl;
-			}
+		// declare any variables you might need right here: (int i, etc)
+		
+		// for loop that nullifies the copyQue array (to erase any previous copies first)
+		
+		// for loop that copies contents of txtFile, starting at the current line, ending with 
+			// copyNumber-1, to copyQue. 
 	}
 
-void Paste()
+void Paste(file &txtFile, string copyQue, int copyNumber)
 	{
-		if(DEBUG)
-			{
-				cout<<"'Paste' has been called. "<<endl;
-			}
+		// declare any variables you might need right here: (int i, etc)
+		
+		// for loop that moves the contents of txtFile down copyNumber digits
+			// starting with currentLineIndex+copyNumber(+1?)
+			// ending with currentLineIndex+1
+			// the for loop should work backwards (i--)
+		// for loop that pastes the content of copyQue into txtFile.contents
+			// the loop should have the opposite conditions of the previous for loop (i++)
+				// starts with currentLineIndex+1
+				// ends with currentLineIndex+copyNumber(+1?)
 	}
 
 void Locate(file &txtFile, string inputString)
@@ -369,29 +381,19 @@ void Delete(file &txtFile, int delete_number)
 			{
 				txtFile.contents[i]=txtFile.contents[i+delete_number];
 				
-			}
-////////////////////////////////////////////////////////// #probs //////////////////////////////////////////////////////////
-		
-		while(txtFile.contents[txtFile.currentLineIndex]=="" and txtFile.currentLineIndex>=1) 
-			// if no lines, 
-			// default to line 1 (index 0)
+			}	
+		while(txtFile.contents[txtFile.currentLineIndex]=="" and txtFile.currentLineIndex>=0) 
+			// if no lines, default to line 0 (index -1),
+			// so that lines can be inserted from the beginning. 
 			{
-				//txtFile.currentLineIndex=txtFile.currentLineIndex-delete_number+1;
 				txtFile.currentLineIndex--;
 			}
 			
-		//if
-		// actual lines deleted variable... 
-		/*if(txtFile.total-realLinesDeleted<=0)
-			{
-				txtFile.total=0;
-			}
-		//else if	
-		else
-			{*/
-				txtFile.total = txtFile.total - delete_number;
-			//}
-////////////////////////////////////////////////////////// #probs //////////////////////////////////////////////////////////
+			txtFile.total = txtFile.total - delete_number;
+			if(txtFile.total<=0)
+				{
+					txtFile.total=0;
+				}
 	}
 
 void Replace(file &txtFile, int replace_number)
@@ -485,6 +487,23 @@ void Open(file &txtFile)
 			{
 				txtFile.total--;
 			}
+		txtFile.currentLineIndex=-1;
+	}
+	
+void New(file &txtFile)
+	{
+		int i;
+		for(i=0; i<=txtFile.total-1; i++)
+			{
+				txtFile.contents[i]="";
+			}
+		txtFile.total=0;
+		cout<<"A new file will be created. "<<endl
+			<<"Please enter the name of this new file. "<<endl
+			<<"> ";
+		getline(cin, txtFile.fileName);
+		txtFile.currentLineIndex=-1;
+
 	}
 	
 void Save(file txtFile) 
@@ -496,7 +515,7 @@ void Save(file txtFile)
 		ofstream fout;
 		fout.open(txtFile.fileName.c_str());
 		
-		for(i=0; i<=txtFile.total; i++)
+		for(i=0; i<=txtFile.total-1; i++)
 			{
 				fout<<txtFile.contents[i];
 				fout<<"\n";
