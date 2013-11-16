@@ -15,7 +15,7 @@ const int MAX = 100;
 
 struct file 
 	{
-		string contents[MAX]; // segmentation fault w/ some values subtracted from MAX...
+		string contents[MAX-2]; // segmentation fault w/ some values subtracted from MAX...
 		string fileName;
 		int currentLineIndex;
 		int total;
@@ -56,8 +56,10 @@ int main() // Main program
 		txtFile.currentLineIndex=-1;
 		txtFile.total=0;
 		int inputValue=0;
-		string inputString;
-		char inputChar;
+		string inputString, openYN;
+		char inputChar, openYNtemp;
+		
+		cout<<"Welcome. \n";
 		
 		inputChar=' '; // Initializes variable as a space, 
 			// uses ' ' to welcome the user in switch. 
@@ -66,8 +68,24 @@ int main() // Main program
 				switch(inputChar)
 				{
 					case ' ': 
-						cout<<"Welcome. \n";
-						Open(txtFile);
+						cout<<"Would you like to open an existing file? "
+							<<endl;
+						getline(cin, openYN);
+						openYNtemp=openYN.at(0);
+						openYNtemp=toupper(openYNtemp);
+						
+						switch(openYNtemp)
+							{
+								case 'Y':
+									Open(txtFile);
+									break;
+								default:
+									cout<<"A new file will be created. "<<endl
+										<<"Please enter the name of this new file. "<<endl
+										<<"> ";
+									getline(cin, txtFile.fileName);
+									break;
+							}
 						break;
 					case 'S': 
 						inputValue=NumberInputReader(inputString);
@@ -102,7 +120,9 @@ int main() // Main program
 					case 'M':
 						inputValue=NumberInputReader(inputString);
 						Move(txtFile, inputValue);	
-						
+						break;
+					case 'O':
+						Open(txtFile);
 						break;
 					case '*': // * saves file to disk
 						Save(txtFile);
@@ -255,6 +275,8 @@ void Type(file &txtFile, int type_number)
 	{ 
 		int i;
 		int otherCounter=0;
+		if(txtFile.currentLineIndex<=0)
+			txtFile.currentLineIndex=0;
 		for(i=txtFile.currentLineIndex; i<(txtFile.currentLineIndex+type_number); i++)
 			{		
 				cout<<"> "<<txtFile.contents[i]<<endl;
@@ -440,30 +462,28 @@ void Quit(file txtFile)
 
 void Open(file &txtFile)
 	{
-		string openYN;
-		char openYNtemp;
+		int i;
 		
-		cout<<"Would you like to open an existing file? "
+		cout<<"Please enter the name of the file which you would like to open. "
 			<<endl;
-		getline(cin, openYN);
-		openYNtemp=openYN.at(0);
-		openYNtemp=toupper(openYNtemp);
+		getline(cin, txtFile.fileName);
+		ifstream fin;
+		fin.open(txtFile.fileName.c_str());
 		
-		switch(openYNtemp)
+		for(i=0; i<=txtFile.total-1; i++)
 			{
-				case 'Y':
-					cout<<"Yes"<<endl;
-					// Load content into array (while loop w/ counter)
-						// While not at end of file
-							// i++
-					// Remember to alter total
-					break;
-				default:
-					cout<<"A new file will be created. "<<endl
-						<<"Please enter the name of this new file. "<<endl
-						<<"> ";
-					getline(cin, txtFile.fileName);
-					break;
+				txtFile.contents[i]="";
+			}
+		i=0;
+		while(not fin.eof() and i<=MAX) // Loads file contents into array. 
+			{ // Reads from file. 
+				getline(fin, txtFile.contents[i]); 
+				i++; 
+			}
+		txtFile.total=i;
+		while(txtFile.contents[txtFile.total-1] == "")
+			{
+				txtFile.total--;
 			}
 	}
 	
