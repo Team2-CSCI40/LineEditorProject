@@ -10,12 +10,12 @@
 #include <fstream>
 using namespace std;
 
-const bool DEBUG = true;
+const bool DEBUG = false;
 const int MAX = 100;
 
 struct file 
 	{
-		string contents[MAX-1]; // segmentation fault w/ some values subtracted from MAX...
+		string contents[MAX]; // segmentation fault w/ some values subtracted from MAX...
 		string fileName;
 		int currentLineIndex;
 		int total;
@@ -35,6 +35,7 @@ void Quit(file);
 void Open(file &);
 void New(file &);
 void Save(file); 
+void IndexPrint(file);
 
 
 
@@ -57,7 +58,7 @@ int main() // Main program
 		txtFile.currentLineIndex=-1;
 		txtFile.total=0;
 		int inputValue=0, copyNumber;
-		string inputString, openYN, copyQue[copyNumber];
+		string inputString, openYN, copyQue[MAX-1];
 		char inputChar, openYNtemp;
 		
 		cout<<"Welcome. \n";
@@ -151,12 +152,18 @@ int main() // Main program
 						cout<<"--(DEBUG)--> currentLineIndex: "<<txtFile.currentLineIndex<<endl;
 					}
 				
+			/*	if(DEBUG)
+					{*/
+						IndexPrint(txtFile);
+					//}
+				
 				
 				cout<<"Command? "<<endl;	
 				getline(cin, inputString);
 				
 				inputChar=inputString.at(0);
 				inputChar=toupper(inputChar);	
+				
 			}
 
 			Quit(txtFile); // calls quit function, Y or N to save. 	
@@ -279,24 +286,45 @@ void Type(file &txtFile, int type_number)
 	{ 
 		int i;
 		int otherCounter=0;
-		if(txtFile.currentLineIndex<=0)
-			txtFile.currentLineIndex=0;
-		for(i=txtFile.currentLineIndex; i<(txtFile.currentLineIndex+type_number); i++)
-			{		
-				cout<<"> "<<txtFile.contents[i]<<endl;
-			}
-		txtFile.currentLineIndex=txtFile.currentLineIndex+type_number-1;
+		bool exit=false;
 		
+		if(txtFile.currentLineIndex<=0)
+			{
+				txtFile.currentLineIndex=0;
+			}
+			
+		i=txtFile.currentLineIndex;
+		while(i<=txtFile.currentLineIndex+type_number-1 and exit !=true)
+			{
+				if(i<= txtFile.total-1l)
+					{
+						cout<<"> "<<txtFile.contents[i]<<endl;
+						i++;
+					}
+				else 
+					{
+						cout<<"End of document. "<<endl;
+						exit = true;
+					}
+			}
+			
+		txtFile.currentLineIndex=txtFile.currentLineIndex+type_number-1;
 	}
 
 void Copy(file txtFile, string &copyQue, int copyNumber)
 	{
 		// declare any variables you might need right here: (int i, etc)
+		int i;
 		
 		// for loop that nullifies the copyQue array (to erase any previous copies first)
 		
 		// for loop that copies contents of txtFile, starting at the current line, ending with 
 			// copyNumber-1, to copyQue. 
+		for(i=0; i<=copyNumber-1; i++)
+			{
+				copyQue[i]=txtFile.contents[i+txtFile.currentLineIndex];
+			}
+			
 	}
 
 void Paste(file &txtFile, string copyQue, int copyNumber)
@@ -346,13 +374,29 @@ void Locate(file &txtFile, string inputString)
 
 void Insert(file &txtFile, int insert_number) 
 	{ 
-		int i;
+		int i, reductionDifference=0;
+		bool reduction=false;
 		
-		if(txtFile.total==0)
+		if(txtFile.total==0 and txtFile.currentLineIndex==0)
 			{
 				txtFile.currentLineIndex=-1;
 			}
 	
+		while(txtFile.currentLineIndex+insert_number-1>=MAX-1)
+			{
+				insert_number--;
+				reduction=true;
+			}
+		
+		if(reduction==true and insert_number>=1)
+			{
+				cout<<"You may only add "<<insert_number<<" more lines. "<<endl;
+			}
+		else if(reduction==true and insert_number<=0)
+			{
+				cout<<"You have reached the maximum number of lines. "<<endl;
+			}
+		
 		for(i=txtFile.total; i>=txtFile.currentLineIndex; i--)
 			{
 				txtFile.contents[i+insert_number]=txtFile.contents[i];
@@ -372,16 +416,37 @@ void Insert(file &txtFile, int insert_number)
 
 void Delete(file &txtFile, int delete_number)
 	{
-		int i, realLinesDeleted=0;
-		while(txtFile.currentLineIndex + delete_number >= MAX-1)
+		int i, deleteIndex;
+		if(txtFile.currentLineIndex==-1)
+			{
+				txtFile.currentLineIndex=0;
+			}
+		while(txtFile.currentLineIndex + delete_number-1 >= MAX-1) // instead, issue error
 			{
 				delete_number--;
 			}
 		for(i=txtFile.currentLineIndex; i<=txtFile.currentLineIndex+txtFile.total-1; i++)
 			{
-				txtFile.contents[i]=txtFile.contents[i+delete_number];
+				if(i+delete_number-1>=MAX-1)
+					{
+						//deleteIndex=MAX-1;
+						txtFile.contents[i]="";
+					}
+				else
+					{
+						txtFile.contents[i]=txtFile.contents[i+delete_number];	// works up until it reaches upper nums
+						
+					}		
 				
 			}	
+		if(delete_number>=MAX-1) //if all lines are deleted, truly remove ALL lines. 
+			{
+				for(i=MAX-1; i>=txtFile.currentLineIndex; i--)
+					{
+						txtFile.contents[i]="";
+					}
+			}
+		
 		while(txtFile.contents[txtFile.currentLineIndex]=="" and txtFile.currentLineIndex>=0) 
 			// if no lines, default to line 0 (index -1),
 			// so that lines can be inserted from the beginning. 
@@ -419,9 +484,9 @@ void Move(file &txtFile, int move_number)
 			{
 				txtFile.currentLineIndex = 0;
 			}
-		else if(txtFile.currentLineIndex + move_number >= MAX-1)
+		else if(txtFile.currentLineIndex + move_number >= MAX)
 			{
-				txtFile.currentLineIndex = MAX-2;
+				txtFile.currentLineIndex = MAX-1;
 			}
 		else
 			{
@@ -477,7 +542,7 @@ void Open(file &txtFile)
 				txtFile.contents[i]="";
 			}
 		i=0;
-		while(not fin.eof() and i<=MAX) // Loads file contents into array. 
+		while(not fin.eof() and i<=MAX-1) // Loads file contents into array. 
 			{ // Reads from file. 
 				getline(fin, txtFile.contents[i]); 
 				i++; 
@@ -510,18 +575,46 @@ void Save(file txtFile)
 	{	// a separate save function 
 		// so that users can save without quitting. 
 		
-		int i;
+		int i, lastLine;
+		bool found;
 		
 		ofstream fout;
 		fout.open(txtFile.fileName.c_str());
 		
-		for(i=0; i<=txtFile.total-1; i++)
+		lastLine=MAX-1;
+		while(found == false and lastLine>=0)
+			{
+				if(txtFile.contents[lastLine].empty()!=false)
+					{
+						lastLine--;
+					}
+				else
+					{
+						found=true;
+					}
+			}
+		
+		for(i=0; i<=lastLine; i++)
 			{
 				fout<<txtFile.contents[i];
-				fout<<"\n";
+				if(i!=lastLine)
+					fout<<"\n";
 			}	
 			
 		cout<<"Your file HAS been saved. "<<endl;
 
 	}
 
+void IndexPrint(file txtFile) // This is for debugging. 
+	{
+		int i; 
+		for (i=0; i<=MAX-1; i++)
+			{
+				cout<<i;
+				if(i==txtFile.currentLineIndex)
+					cout<<">->-> ";
+				else
+					cout<<"> ";
+				cout<<txtFile.contents[i]<<endl;
+			}
+	}
