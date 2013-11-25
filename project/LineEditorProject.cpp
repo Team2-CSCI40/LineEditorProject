@@ -21,10 +21,16 @@ struct file
 		int total;
 	};
 
+struct node
+	{
+		string data;
+		node *next; 
+	};
+
 int NumberInputReader(string);
 void Substitute(file&, string); 
 void Type(file&, int); 
-void Copy(file, string&, int);
+void Copy(file, node, node, int);
 void Paste(file&, string, int);
 void Locate(file &, string); 
 void Insert(file &, int); 
@@ -57,9 +63,11 @@ int main() // Main program
 		file txtFile;
 		txtFile.currentLineIndex=-1;
 		txtFile.total=0;
-		int inputValue=0, copyNumber;
-		string inputString, openYN, copyQue[MAX-1];
+		int inputValue=0, copyNumber, i;
+		string inputString, openYN;
 		char inputChar, openYNtemp;
+		node *first, *current; // These are for COPY and PASTE
+		first= new node; // ^^^^^^^^^^^^^
 		
 		cout<<"Welcome. \n";
 		
@@ -100,10 +108,17 @@ int main() // Main program
 					case 'C':
 						copyNumber=NumberInputReader(inputString); // Special case for copy, 
 							// because it is used again with paste. 
-						Copy(txtFile, copyQue[copyNumber], copyNumber);	
+						current=first;
+						for(i=2;i<=copyNumber;i++)
+							{
+								(*current).next=new node;
+								current=(*current).next;
+							}
+						(*current).next=NULL;
+						Copy(txtFile, *first, *current, copyNumber);	
 						break;
 					case 'P':
-						Paste(txtFile, copyQue[copyNumber], copyNumber);
+						//Paste(txtFile, copyQue[copyNumber], copyNumber);
 						break;
 					case 'L':
 						inputValue=NumberInputReader(inputString);
@@ -311,7 +326,7 @@ void Type(file &txtFile, int type_number)
 		txtFile.currentLineIndex=txtFile.currentLineIndex+type_number-1;
 	}
 
-void Copy(file txtFile, string &copyQue, int copyNumber)
+void Copy(file txtFile, node first, node current, int copyNumber)
 	{
 		// declare any variables you might need right here: (int i, etc)
 		int i;
@@ -320,9 +335,18 @@ void Copy(file txtFile, string &copyQue, int copyNumber)
 		
 		// for loop that copies contents of txtFile, starting at the current line, ending with 
 			// copyNumber-1, to copyQue. 
-		for(i=0; i<=copyNumber-1; i++)
+			
+		/*for(i=0; i<=copyNumber-1; i++)
 			{
 				copyQue[i]=txtFile.contents[i+txtFile.currentLineIndex];
+			}*/
+			
+		current=first; 
+		while(current != NULL)
+			{
+				/*(*current).data=let;
+				let++;
+				current=(*current).next;*/
 			}
 			
 	}
@@ -484,7 +508,7 @@ void Move(file &txtFile, int move_number)
 			{
 				txtFile.currentLineIndex = 0;
 			}
-		else if(txtFile.currentLineIndex + move_number >= MAX)
+		else if(txtFile.currentLineIndex+move_number-1 >= MAX-1)
 			{
 				txtFile.currentLineIndex = MAX-1;
 			}
