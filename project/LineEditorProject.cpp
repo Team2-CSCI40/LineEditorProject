@@ -10,12 +10,12 @@
 #include <fstream>
 using namespace std;
 
-const bool DEBUG = false;
+const bool DEBUG = true;
 const int MAX = 100;
 
 struct file 
 	{
-		string contents[MAX]; // segmentation fault w/ some values subtracted from MAX...
+		string contents[MAX]; 
 		string fileName;
 		int currentLineIndex;
 		int total;
@@ -24,8 +24,8 @@ struct file
 int NumberInputReader(string);
 void Substitute(file&, string); 
 void Type(file&, int); 
-void Copy(file, string&, int);
-void Paste(file&, string, int);
+void Copy(file, string[], int);
+void Paste(file&, string[], int);
 void Locate(file &, string); 
 void Insert(file &, int); 
 void Delete(file &, int); 
@@ -70,8 +70,6 @@ int main() // Main program
 				switch(inputChar)
 				{
 					case ' ': 
-						if(not DEBUG)
-							{
 								cout<<"Would you like to open an existing file? "
 									<<endl;
 								getline(cin, openYN);
@@ -87,7 +85,6 @@ int main() // Main program
 											New(txtFile);
 											break;
 									}
-							}
 						break;
 					case 'S': 
 						inputValue=NumberInputReader(inputString);
@@ -100,10 +97,10 @@ int main() // Main program
 					case 'C':
 						copyNumber=NumberInputReader(inputString); // Special case for copy, 
 							// because it is used again with paste. 
-						Copy(txtFile, copyQue[copyNumber], copyNumber);	
+						Copy(txtFile, copyQue, copyNumber);	
 						break;
 					case 'P':
-						Paste(txtFile, copyQue[copyNumber], copyNumber);
+						Paste(txtFile, copyQue, copyNumber);
 						break;
 					case 'L':
 						inputValue=NumberInputReader(inputString);
@@ -152,10 +149,10 @@ int main() // Main program
 						cout<<"--(DEBUG)--> currentLineIndex: "<<txtFile.currentLineIndex<<endl;
 					}
 				
-			/*	if(DEBUG)
-					{*/
+				if(DEBUG)
+					{
 						IndexPrint(txtFile);
-					//}
+					}
 				
 				
 				cout<<"Command? "<<endl;	
@@ -244,7 +241,7 @@ void Substitute(file &txtFile, string input_string)
 				check = false;
 			}
 		txtfile_length = txtFile.contents[i_for_loop].length();
-				
+			
 		while(check and not exit)
 			{
 				txtfile_length = txtFile.contents[i_for_loop].length();
@@ -311,13 +308,16 @@ void Type(file &txtFile, int type_number)
 		txtFile.currentLineIndex=txtFile.currentLineIndex+type_number-1;
 	}
 
-void Copy(file txtFile, string &copyQue, int copyNumber)
+void Copy(file txtFile, string copyQue[], int copyNumber)
 	{
 		// declare any variables you might need right here: (int i, etc)
 		int i;
 		
 		// for loop that nullifies the copyQue array (to erase any previous copies first)
-		
+		for(i=0; i<=copyNumber-1; i++)
+			{
+				copyQue[i]="";
+			}
 		// for loop that copies contents of txtFile, starting at the current line, ending with 
 			// copyNumber-1, to copyQue. 
 		for(i=0; i<=copyNumber-1; i++)
@@ -327,18 +327,28 @@ void Copy(file txtFile, string &copyQue, int copyNumber)
 			
 	}
 
-void Paste(file &txtFile, string copyQue, int copyNumber)
+void Paste(file &txtFile, string copyQue[], int copyNumber)
 	{
 		// declare any variables you might need right here: (int i, etc)
-		
+		int i;
 		// for loop that moves the contents of txtFile down copyNumber digits
 			// starting with currentLineIndex+copyNumber(+1?)
 			// ending with currentLineIndex+1
 			// the for loop should work backwards (i--)
+		for(i=txtFile.total-1; i>=txtFile.currentLineIndex+1; i--)
+			{
+				txtFile.contents[i+copyNumber]=txtFile.contents[i];
+			}			
 		// for loop that pastes the content of copyQue into txtFile.contents
 			// the loop should have the opposite conditions of the previous for loop (i++)
 				// starts with currentLineIndex+1
 				// ends with currentLineIndex+copyNumber(+1?)
+		for(i=txtFile.currentLineIndex+1; i<=txtFile.currentLineIndex+copyNumber; i++)
+			{
+				txtFile.contents[i]=copyQue[i-txtFile.currentLineIndex-1];
+			}
+		txtFile.total=txtFile.total+copyNumber;
+		txtFile.currentLineIndex=i-1;
 	}
 
 void Locate(file &txtFile, string inputString)
@@ -377,7 +387,7 @@ void Insert(file &txtFile, int insert_number)
 		int i, reductionDifference=0;
 		bool reduction=false;
 		
-		if(txtFile.total==0 and txtFile.currentLineIndex==0)
+		if(txtFile.total==0 and txtFile.currentLineIndex<=0)
 			{
 				txtFile.currentLineIndex=-1;
 			}
@@ -387,7 +397,7 @@ void Insert(file &txtFile, int insert_number)
 				insert_number--;
 				reduction=true;
 			}
-		
+
 		if(reduction==true and insert_number>=1)
 			{
 				cout<<"You may only add "<<insert_number<<" more lines. "<<endl;
@@ -396,8 +406,8 @@ void Insert(file &txtFile, int insert_number)
 			{
 				cout<<"You have reached the maximum number of lines. "<<endl;
 			}
-		
-		for(i=txtFile.total; i>=txtFile.currentLineIndex; i--)
+		 // CRASHES HERE
+		for(i=txtFile.total-1; i>=txtFile.currentLineIndex+1; i--)
 			{
 				txtFile.contents[i+insert_number]=txtFile.contents[i];
 			}
@@ -411,54 +421,27 @@ void Insert(file &txtFile, int insert_number)
 		txtFile.total = txtFile.total + insert_number;
 		
 		txtFile.currentLineIndex = insert_number + txtFile.currentLineIndex;
-				
+			
 	}
 
 void Delete(file &txtFile, int delete_number)
 	{
-		int i, deleteIndex;
-		if(txtFile.currentLineIndex==-1)
-			{
-				txtFile.currentLineIndex=0;
-			}
-		while(txtFile.currentLineIndex + delete_number-1 >= MAX-1) // instead, issue error
-			{
-				delete_number--;
-			}
-		for(i=txtFile.currentLineIndex; i<=txtFile.currentLineIndex+txtFile.total-1; i++)
-			{
-				if(i+delete_number-1>=MAX-1)
-					{
-						//deleteIndex=MAX-1;
-						txtFile.contents[i]="";
-					}
-				else
-					{
-						txtFile.contents[i]=txtFile.contents[i+delete_number];	// works up until it reaches upper nums
-						
-					}		
-				
-			}	
-		if(delete_number>=MAX-1) //if all lines are deleted, truly remove ALL lines. 
-			{
-				for(i=MAX-1; i>=txtFile.currentLineIndex; i--)
-					{
-						txtFile.contents[i]="";
-					}
-			}
+		int i;
 		
-		while(txtFile.contents[txtFile.currentLineIndex]=="" and txtFile.currentLineIndex>=0) 
-			// if no lines, default to line 0 (index -1),
-			// so that lines can be inserted from the beginning. 
+		for(i=txtFile.currentLineIndex+delete_number; i<=txtFile.total-1; i++)
+			{
+				txtFile.contents[i-delete_number]=txtFile.contents[i];	
+				
+			}
+		if(txtFile.total<=0)
+			{
+				txtFile.total=0;
+			}
+		txtFile.total = txtFile.total - delete_number;
+		if(txtFile.currentLineIndex==txtFile.total)
 			{
 				txtFile.currentLineIndex--;
 			}
-			
-			txtFile.total = txtFile.total - delete_number;
-			if(txtFile.total<=0)
-				{
-					txtFile.total=0;
-				}
 	}
 
 void Replace(file &txtFile, int replace_number)
@@ -467,8 +450,9 @@ void Replace(file &txtFile, int replace_number)
 		for(i=txtFile.currentLineIndex; i<=txtFile.currentLineIndex+replace_number-1; i++)
 			{
 				cout<<"> ";
-				getline(cin,txtFile.contents[i]);
+				getline(cin,txtFile.contents[i]); 
 			}
+			
 		if(txtFile.currentLineIndex+replace_number>=txtFile.total)
 			{
 				txtFile.total=txtFile.currentLineIndex+replace_number;
