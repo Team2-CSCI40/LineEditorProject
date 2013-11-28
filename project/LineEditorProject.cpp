@@ -10,7 +10,7 @@
 #include <fstream>
 using namespace std;
 
-const bool DEBUG = true;
+const bool DEBUG = false;
 const int MAX = 100;
 
 struct file 
@@ -564,7 +564,7 @@ void Save(file txtFile)
 		
 		ofstream fout;
 		fout.open(txtFile.fileName.c_str());
-		
+		/*
 		lastLine=MAX-1;
 		while(found == false and lastLine>=0)
 			{
@@ -577,11 +577,11 @@ void Save(file txtFile)
 						found=true;
 					}
 			}
-		
-		for(i=0; i<=lastLine; i++)
+		*/
+		for(i=0; i<=txtFile.total-1; i++)
 			{
 				fout<<txtFile.contents[i];
-				if(i!=lastLine)
+				//if(i!=lastLine)
 					fout<<"\n";
 			}	
 			
