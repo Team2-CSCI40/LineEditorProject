@@ -1,3 +1,2 @@
-1. WRITE COPY AND PASTE. 
-2. Create a command list wiki. 
-3. Make Locate and Substitute work with /. 
+1. Make Locate and Substitute work with /. 
+2. HTML highlighting. 

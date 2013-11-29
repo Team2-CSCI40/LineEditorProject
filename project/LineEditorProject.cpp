@@ -8,9 +8,10 @@
 
 #include <iostream>
 #include <fstream>
+#include <cmath>
 using namespace std;
 
-const bool DEBUG = false;
+const bool DEBUG = true;
 const int MAX = 100;
 
 struct file 
@@ -22,9 +23,10 @@ struct file
 	};
 
 int NumberInputReader(string);
+void Help();
 void Substitute(file&, string); 
 void Type(file&, int); 
-void Copy(file, string[], int);
+void Copy(file, string[], int&);
 void Paste(file&, string[], int);
 void Locate(file &, string); 
 void Insert(file &, int); 
@@ -58,44 +60,50 @@ int main() // Main program
 		txtFile.currentLineIndex=-1;
 		txtFile.total=0;
 		int inputValue=0, copyNumber;
-		string inputString, openYN, copyQue[MAX-1];
+		string inputString, openYN, copyQue[MAX];
 		char inputChar, openYNtemp;
 		
-		cout<<"Welcome. \n";
 		
-		inputChar=' '; // Initializes variable as a space, 
-			// uses ' ' to welcome the user in switch. 
+		cout<<"~~~\033[1;32m Welcome \033[0m~~~\n";
+		
+		cout<<"Would you like to open an existing file? "
+			<<endl;
+		getline(cin, openYN);
+		if(openYN == "")
+			{
+				cout<<"\033[1;31m-You'll have to be more specific next time.-\033[0m "<<endl;
+				New(txtFile);
+			}
+		else
+			{
+				openYNtemp=openYN.at(0);
+				openYNtemp=toupper(openYNtemp);
+				switch(openYNtemp)
+					{
+						case 'Y':
+							Open(txtFile);
+							break;
+						default:
+							New(txtFile);
+							break;
+					}
+			}
+		
+		inputChar=' '; // Initializes variable as a space just as an entry point. 
 		while(inputChar!='Q') // Main event loop. //"if not quit"
 			{
 				switch(inputChar)
 				{
 					case ' ': 
-								cout<<"Would you like to open an existing file? "
-									<<endl;
-								getline(cin, openYN);
-								openYNtemp=openYN.at(0);
-								openYNtemp=toupper(openYNtemp);
-								
-								switch(openYNtemp)
-									{
-										case 'Y':
-											Open(txtFile);
-											break;
-										default:
-											New(txtFile);
-											break;
-									}
 						break;
 					case 'S': 
-						inputValue=NumberInputReader(inputString);
 						Substitute(txtFile,inputString);
 						break;
 					case 'T':
-						inputValue=NumberInputReader(inputString);
 						Type(txtFile, inputValue);
 						break;
 					case 'C':
-						copyNumber=NumberInputReader(inputString); // Special case for copy, 
+						copyNumber=NumberInputReader(inputString); // Special variable for copy 
 							// because it is used again with paste. 
 						Copy(txtFile, copyQue, copyNumber);	
 						break;
@@ -103,23 +111,18 @@ int main() // Main program
 						Paste(txtFile, copyQue, copyNumber);
 						break;
 					case 'L':
-						inputValue=NumberInputReader(inputString);
 						Locate(txtFile, inputString);
 						break;
 					case 'I':
-						inputValue=NumberInputReader(inputString);
 						Insert(txtFile, inputValue);
 						break;
 					case 'D':
-						inputValue=NumberInputReader(inputString);
 						Delete(txtFile, inputValue);
 						break;	
 					case 'R':
-						inputValue=NumberInputReader(inputString);
 						Replace(txtFile, inputValue);
 						break;	
 					case 'M':
-						inputValue=NumberInputReader(inputString);
 						Move(txtFile, inputValue);	
 						break;
 					case 'O':
@@ -130,40 +133,50 @@ int main() // Main program
 						break;
 					case '*': // * saves file to disk
 						Save(txtFile);
-						//cin.ignore(1000, '\n');
 						break;
-					default: // maybe we can add something that 
-						// redirects the user to the 
-						// project's wiki page, opening their browser... 
-						cout<<"'"<<inputString<<"'"
+					case 'H': 
+						Help();
+						break;
+					case'.': // default for re-looping
+						break;
+					default:  
+						cout<<"\033[1;31m'"<<inputString<<"'\033[0m"
 							<<" is not a valid command. "
 							<<endl
-							<<"Please enter a valid command. "
+							<<"Enter 'Help' for a list of valid commands. "
 							<<endl;
 						break;	
 				}
 				
 				if(DEBUG)
 					{
+						cout<<"\033[1;31m";
 						cout<<"--(DEBUG)--> total: "<<txtFile.total<<endl;
 						cout<<"--(DEBUG)--> currentLineIndex: "<<txtFile.currentLineIndex<<endl;
-					}
-				
-				if(DEBUG)
-					{
 						IndexPrint(txtFile);
+						cout<<"\033[0m";
 					}
-				
 				
 				cout<<"Command? "<<endl;	
 				getline(cin, inputString);
 				
-				inputChar=inputString.at(0);
-				inputChar=toupper(inputChar);	
+				if(inputString == "")
+					{
+						cout<<"\033[1;31m-You'll have to be more specific.-\033[0m "<<endl;
+						inputChar='.';
+					}
+				else
+					{
+						inputChar=inputString.at(0);
+						inputChar=toupper(inputChar);	
+						
+						inputValue=NumberInputReader(inputString);
+					}
 				
 			}
 
 			Quit(txtFile); // calls quit function, Y or N to save. 	
+			cout<<"Have a nice day!"<<endl;	
 		return 0;
 	}
 	
@@ -207,6 +220,43 @@ int NumberInputReader(string inputString) // Reads the number value input from i
 		
 		return inputValue;
 	}
+
+void Help()
+	{
+		cout<<endl
+			<<"Here is a list of valid commands (and their formats): "<<endl
+			<<"\033[1;32mInsert\033[0m (Insert #)"<<endl
+			<<"...Inserts # lines after the current line. "<<endl
+			<<"\033[1;32mType\033[0m (Type #)"<<endl
+			<<"...Prints # lines, including the current line, onto the screen. "<<endl
+			<<"\033[1;32mMove\033[0m (Move +-#)"<<endl
+			<<"...Moves # lines forward or backward from the current line. "<<endl
+			<<"\033[1;32mReplace\033[0m (Replace #)"<<endl
+			<<"...Replaces # lines beginning with the current line with input. "<<endl
+			<<"\033[1;32mDelete\033[0m (Delete #)"<<endl
+			<<"...Deletes the next # lines beginning with the current line. "<<endl
+			<<"\033[1;32mLocate\033[0m (Locate /text/)"<<endl
+			<<"...Locates the next occurrence of /text/. "<<endl
+			<<"\033[1;32mSubstitute\033[0m (Substitute /Original text/Substituted text/)"<<endl
+			<<"...Substitutes the all occurrences of /Original text/ "<<endl
+			<<"...with /Substituted text/ in the current line. "<<endl
+			<<"\033[1;32mCopy\033[0m (Copy #)"<<endl
+			<<"...Copies the next # lines beginning with the current line. "<<endl
+			<<"\033[1;32mPaste\033[0m (Paste)"<<endl
+			<<"...Pastes whatever has been copied last. "<<endl
+			<<"\033[1;32mQuit\033[0m (Quit)"<<endl
+			<<"...Exits the editor. "<<endl
+			<<"\033[1;32mOpen\033[0m (Open)"<<endl
+			<<"...Opens a new file. "<<endl
+			<<"\033[1;32mNew\033[0m (New)"<<endl
+			<<"...Creates a new file. "<<endl
+			<<"\033[1;32m*Save\033[0m (*)"<<endl
+			<<"...Saves the current file to disk. "<<endl
+			<<"\033[1;32mHelp\033[0m (Help)"<<endl
+			<<"...Prints the above help menu. "<<endl
+			<<endl;
+		
+	}
 	
 void Substitute(file &txtFile, string input_string)
 	{
@@ -233,11 +283,12 @@ void Substitute(file &txtFile, string input_string)
 		string the_original_string = txtFile.contents[i_for_loop];
 		if(txtFile.contents[i_for_loop].find(old_string) == -1)//to show if no match string for the old_string.
 			{
-				cout<<"'"<<old_string<<"' doesn't occur on line "<<i_for_loop<<". "<<endl;
+				cout<<"\033[1;31m-'"<<old_string<<"'\033[0m does not occur on line \033[1;31m"
+					<<i_for_loop<<"\033[0m.- "<<endl;
 			}
 		if(txtFile.contents[i_for_loop].empty() == true)//to leave if it empty.
 			{
-				cout<<"Line number "<<i_for_loop<<" is empty."<<endl;
+				cout<<"\033[1;31m-Line number "<<i_for_loop+1<<" is empty.-\033[0m"<<endl;
 				check = false;
 			}
 		txtfile_length = txtFile.contents[i_for_loop].length();
@@ -275,7 +326,8 @@ void Substitute(file &txtFile, string input_string)
 					}
 			}			
 		if(txtFile.contents[i_for_loop] != the_original_string)
-			cout<<"Text from current line: "<<endl<<"> "<<txtFile.contents[i_for_loop]<<endl;	
+			cout<<"Text from current line: "<<endl
+				<<"\033[1;36m>\033[0m "<<txtFile.contents[i_for_loop]<<endl;	
 	}
 
 
@@ -285,6 +337,8 @@ void Type(file &txtFile, int type_number)
 		int otherCounter=0;
 		bool exit=false;
 		
+		type_number=fabs(type_number);
+		
 		if(txtFile.currentLineIndex<=0)
 			{
 				txtFile.currentLineIndex=0;
@@ -293,33 +347,37 @@ void Type(file &txtFile, int type_number)
 		i=txtFile.currentLineIndex;
 		while(i<=txtFile.currentLineIndex+type_number-1 and exit !=true)
 			{
-				if(i<= txtFile.total-1l)
+				if(i<= txtFile.total-1)
 					{
-						cout<<"> "<<txtFile.contents[i]<<endl;
+						cout<<"\033[1;36m>\033[0m "<<txtFile.contents[i]<<endl;
 						i++;
 					}
 				else 
 					{
-						cout<<"End of document. "<<endl;
+						cout<<"\033[1;31m-End of document.-\033[0m "<<endl;
 						exit = true;
 					}
 			}
 			
-		txtFile.currentLineIndex=txtFile.currentLineIndex+type_number-1;
+		txtFile.currentLineIndex=i-1;
 	}
 
-void Copy(file txtFile, string copyQue[], int copyNumber)
+void Copy(file txtFile, string copyQue[], int &copyNumber)
 	{
-		// declare any variables you might need right here: (int i, etc)
 		int i;
 		
-		// for loop that nullifies the copyQue array (to erase any previous copies first)
+		copyNumber=fabs(copyNumber);
+		
+		while(copyNumber+txtFile.currentLineIndex-1>=txtFile.total)
+			{
+				copyNumber--;
+			}
+		
 		for(i=0; i<=copyNumber-1; i++)
 			{
 				copyQue[i]="";
 			}
-		// for loop that copies contents of txtFile, starting at the current line, ending with 
-			// copyNumber-1, to copyQue. 
+			 
 		for(i=0; i<=copyNumber-1; i++)
 			{
 				copyQue[i]=txtFile.contents[i+txtFile.currentLineIndex];
@@ -327,28 +385,27 @@ void Copy(file txtFile, string copyQue[], int copyNumber)
 			
 	}
 
-void Paste(file &txtFile, string copyQue[], int copyNumber)
+void Paste(file &txtFile, string copyQue[], int pasteNumber)
 	{
-		// declare any variables you might need right here: (int i, etc)
 		int i;
-		// for loop that moves the contents of txtFile down copyNumber digits
-			// starting with currentLineIndex+copyNumber(+1?)
-			// ending with currentLineIndex+1
-			// the for loop should work backwards (i--)
-		for(i=txtFile.total-1; i>=txtFile.currentLineIndex+1; i--)
+		
+		if(pasteNumber+txtFile.total-1>=MAX)
 			{
-				txtFile.contents[i+copyNumber]=txtFile.contents[i];
-			}			
-		// for loop that pastes the content of copyQue into txtFile.contents
-			// the loop should have the opposite conditions of the previous for loop (i++)
-				// starts with currentLineIndex+1
-				// ends with currentLineIndex+copyNumber(+1?)
-		for(i=txtFile.currentLineIndex+1; i<=txtFile.currentLineIndex+copyNumber; i++)
-			{
-				txtFile.contents[i]=copyQue[i-txtFile.currentLineIndex-1];
+				cout<<"\033[1;31m-You cannot exceed the total number of lines.- \033[0m"<<endl;
 			}
-		txtFile.total=txtFile.total+copyNumber;
-		txtFile.currentLineIndex=i-1;
+		else
+			{
+				for(i=txtFile.total-1; i>=txtFile.currentLineIndex+1; i--)
+					{
+						txtFile.contents[i+pasteNumber]=txtFile.contents[i];
+					} 
+				for(i=txtFile.currentLineIndex+1; i<=txtFile.currentLineIndex+pasteNumber; i++)
+					{
+						txtFile.contents[i]=copyQue[i-txtFile.currentLineIndex-1];
+					}
+				txtFile.total=txtFile.total+pasteNumber;
+				txtFile.currentLineIndex=i-1;
+			}
 	}
 
 void Locate(file &txtFile, string inputString)
@@ -372,13 +429,13 @@ void Locate(file &txtFile, string inputString)
 			
 		if(found == -1)
 			{
-				cout<<"No instance of '"<<searchString<<"' was found. "<<endl;
+				cout<<"\033[1;31m-No instance of '"<<searchString<<"' was found.-\033[1;31m "<<endl;
 			}
 		else 
 			{
 				txtFile.currentLineIndex=i-1;
 			}
-		cout<<"> "<<txtFile.contents[txtFile.currentLineIndex]<<endl;
+		cout<<"\033[1;36m>\033[0m "<<txtFile.contents[txtFile.currentLineIndex]<<endl;
 		
 	}
 
@@ -386,6 +443,8 @@ void Insert(file &txtFile, int insert_number)
 	{ 
 		int i, reductionDifference=0;
 		bool reduction=false;
+		
+		insert_number=fabs(insert_number);
 		
 		if(txtFile.total==0 and txtFile.currentLineIndex<=0)
 			{
@@ -400,13 +459,13 @@ void Insert(file &txtFile, int insert_number)
 
 		if(reduction==true and insert_number>=1)
 			{
-				cout<<"You may only add "<<insert_number<<" more lines. "<<endl;
+				cout<<"\033[1;31m-You may only add "<<insert_number
+					<<" more lines.-\033[1;31m "<<endl;
 			}
 		else if(reduction==true and insert_number<=0)
 			{
-				cout<<"You have reached the maximum number of lines. "<<endl;
+				cout<<"\033[1;31m-You have reached the maximum number of lines.-\033[1;31m "<<endl;
 			}
-		 // CRASHES HERE
 		for(i=txtFile.total-1; i>=txtFile.currentLineIndex+1; i--)
 			{
 				txtFile.contents[i+insert_number]=txtFile.contents[i];
@@ -414,7 +473,7 @@ void Insert(file &txtFile, int insert_number)
 		
 		for(i=txtFile.currentLineIndex+1; i<=insert_number+txtFile.currentLineIndex; i++) 
 			{
-				cout<<"> ";
+				cout<<"\033[1;36m>\033[0m ";
 				getline(cin,txtFile.contents[i]);
 			}
 			
@@ -428,14 +487,25 @@ void Delete(file &txtFile, int delete_number)
 	{
 		int i;
 		
+		delete_number=fabs(delete_number);
+		
+		if(delete_number==0)
+			{
+				delete_number=1;
+			}
+		
+		while(delete_number+txtFile.currentLineIndex-1>=txtFile.total)
+			{
+				delete_number--;
+			}
 		for(i=txtFile.currentLineIndex+delete_number; i<=txtFile.total-1; i++)
 			{
 				txtFile.contents[i-delete_number]=txtFile.contents[i];	
 				
 			}
-		if(txtFile.total<=0)
+		while(txtFile.total<=0)
 			{
-				txtFile.total=0;
+				txtFile.total++;
 			}
 		txtFile.total = txtFile.total - delete_number;
 		if(txtFile.currentLineIndex==txtFile.total)
@@ -447,12 +517,37 @@ void Delete(file &txtFile, int delete_number)
 void Replace(file &txtFile, int replace_number)
 	{
 		int i;
+		bool reduced;
+		
+		replace_number=fabs(replace_number);
+		
+		if(txtFile.currentLineIndex==-1)
+			{
+				txtFile.currentLineIndex=0;
+			}
+		
+		while(replace_number+txtFile.currentLineIndex-1>=txtFile.total)
+			{
+				replace_number--;
+				reduced=true;
+			}
+		
+		if(replace_number<=0 and reduced==true)
+			{
+				cout<<"\033[1;31m-You cannot replace lines that do not exist.-\033[0m"<<endl;
+			}
+		
 		for(i=txtFile.currentLineIndex; i<=txtFile.currentLineIndex+replace_number-1; i++)
 			{
-				cout<<"> ";
+				cout<<"\033[1;36m>\033[0m ";
 				getline(cin,txtFile.contents[i]); 
 			}
-			
+		
+		if(reduced==true)
+			{
+				cout<<"\033[1;31m-No more replaceable lines exist past this point.-\033[0m"<<endl;
+			}
+		
 		if(txtFile.currentLineIndex+replace_number>=txtFile.total)
 			{
 				txtFile.total=txtFile.currentLineIndex+replace_number;
@@ -468,19 +563,21 @@ void Move(file &txtFile, int move_number)
 			{
 				txtFile.currentLineIndex = 0;
 			}
-		else if(txtFile.currentLineIndex + move_number >= MAX)
+		else if(txtFile.currentLineIndex + move_number >= txtFile.total)
 			{
-				txtFile.currentLineIndex = MAX-1;
+				txtFile.currentLineIndex = txtFile.total-1;
 			}
 		else
 			{
 				txtFile.currentLineIndex = txtFile.currentLineIndex + move_number;
 			}
 			
-		cout<<"Text from current line: "<<endl<<"> "<<txtFile.contents[txtFile.currentLineIndex]<<endl;
+		cout<<"Text from current line: "<<endl<<"\033[1;36m>\033[0m "<<txtFile.contents[txtFile.currentLineIndex]<<endl;
 	}
 
-void Quit(file txtFile)  
+void Quit(file txtFile)  // Quit function uses recusion to make sure the user does not
+	// accidently make a typo when answering "would you like to save first"
+	// and lose their work because of it. 
 	{
 		string yesNo;
 		char yesNoTemp;
@@ -490,25 +587,38 @@ void Quit(file txtFile)
 			<<endl;
 			
 		getline(cin, yesNo);
-		yesNoTemp=yesNo.at(0);
-		yesNoTemp=toupper(yesNoTemp);
-		
-		switch(yesNoTemp)
-			{	
-				case 'Y':
-					Save(txtFile);
-					break;
-				case '*':
-					Save(txtFile);
-					break;
-				case 'S':
-					Save(txtFile);
-				case 'N':
-					cout<<"Your file HAS NOT been saved. "<<endl;
-				default:
-					break;
+		if(yesNo == "")
+			{
+				cout<<"\033[1;31m-You didn't enter a command.-\033[0m "<<endl;
+				Quit(txtFile);
 			}
-		cout<<"Have a nice day!"<<endl;	
+		else
+			{
+				yesNoTemp=yesNo.at(0);
+				yesNoTemp=toupper(yesNoTemp);
+				switch(yesNoTemp)
+					{	
+						case 'Y':
+							Save(txtFile);
+							break;
+						case '*':
+							Save(txtFile);
+							break;
+						case 'S':
+							Save(txtFile);
+							break;
+						case 'N':
+							cout<<"Your file \033[1;31mHAS NOT\033[0m been saved. "<<endl;
+							break;
+						default:
+							cout<<"Saving is serious business and "
+								<<"\033[1;31m'"<<yesNo<<"'\033[0m"
+								<<" is not an appropriate response. "<<endl
+								<<"Please enter an appropriate response. "<<endl;
+							Quit(txtFile);
+							break;
+					}
+			}
 	}
 
 void Open(file &txtFile)
@@ -520,23 +630,30 @@ void Open(file &txtFile)
 		getline(cin, txtFile.fileName);
 		ifstream fin;
 		fin.open(txtFile.fileName.c_str());
-		
-		for(i=0; i<=txtFile.total-1; i++)
+		if(fin)
 			{
-				txtFile.contents[i]="";
+				for(i=0; i<=txtFile.total-1; i++)
+					{
+						txtFile.contents[i]="";
+					}
+				i=0;
+				while(not fin.eof() and i<=MAX-1) // Loads file contents into array. 
+					{ // Reads from file. 
+						getline(fin, txtFile.contents[i]); 
+						i++; 
+					}
+				txtFile.total=i;
+				while(txtFile.contents[txtFile.total-1] == "")
+					{
+						txtFile.total--;
+					}
+				txtFile.currentLineIndex=-1;
 			}
-		i=0;
-		while(not fin.eof() and i<=MAX-1) // Loads file contents into array. 
-			{ // Reads from file. 
-				getline(fin, txtFile.contents[i]); 
-				i++; 
-			}
-		txtFile.total=i;
-		while(txtFile.contents[txtFile.total-1] == "")
+		else
 			{
-				txtFile.total--;
+				cout<<"\033[1;31m-This file does not exist.-\033[0m"<<endl;
+				New(txtFile);
 			}
-		txtFile.currentLineIndex=-1;
 	}
 	
 void New(file &txtFile)
@@ -547,9 +664,9 @@ void New(file &txtFile)
 				txtFile.contents[i]="";
 			}
 		txtFile.total=0;
-		cout<<"A new file will be created. "<<endl
+		cout<<"\033[1;32mA new file will be created.\033[0m"<<endl
 			<<"Please enter the name of this new file. "<<endl
-			<<"> ";
+			<<"\033[1;36m>\033[0m ";
 		getline(cin, txtFile.fileName);
 		txtFile.currentLineIndex=-1;
 
@@ -559,42 +676,27 @@ void Save(file txtFile)
 	{	// a separate save function 
 		// so that users can save without quitting. 
 		
-		int i, lastLine;
-		bool found;
+		int i;
 		
 		ofstream fout;
 		fout.open(txtFile.fileName.c_str());
-		/*
-		lastLine=MAX-1;
-		while(found == false and lastLine>=0)
-			{
-				if(txtFile.contents[lastLine].empty()!=false)
-					{
-						lastLine--;
-					}
-				else
-					{
-						found=true;
-					}
-			}
-		*/
+		
 		for(i=0; i<=txtFile.total-1; i++)
 			{
 				fout<<txtFile.contents[i];
-				//if(i!=lastLine)
-					fout<<"\n";
+				fout<<"\n";
 			}	
-			
-		cout<<"Your file HAS been saved. "<<endl;
+		
+		cout<<"Your file \033[1;34mHAS\033[0m been saved. "<<endl;
 
 	}
 
 void IndexPrint(file txtFile) // This is for debugging. 
 	{
 		int i; 
-		for (i=0; i<=MAX-1; i++)
+		for (i=0; i<=txtFile.total-1; i++)
 			{
-				cout<<i;
+				cout<<"--(DEBUG)--"<<i;
 				if(i==txtFile.currentLineIndex)
 					cout<<">->-> ";
 				else
