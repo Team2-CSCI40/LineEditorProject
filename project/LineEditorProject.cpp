@@ -9,50 +9,39 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <string>
 using namespace std;
 
-const bool DEBUG = true;
+const bool DEBUG = false;
 const int MAX = 100;
 
-struct file 
+struct file // This contains the file information and contents
 	{
 		string contents[MAX]; 
 		string fileName;
 		int currentLineIndex;
 		int total;
+		bool markupHighlighting;
 	};
 
-int NumberInputReader(string);
-void Help();
-void Substitute(file&, string); 
-void Type(file&, int); 
-void Copy(file, string[], int&);
-void Paste(file&, string[], int);
-void Locate(file &, string); 
-void Insert(file &, int); 
-void Delete(file &, int); 
-void Replace(file &, int); 
-void Move(file &, int); 
-void Quit(file);
-void Open(file &);
-void New(file &);
-void Save(file); 
-void IndexPrint(file);
-
-
-
-////////////////////////////////////////////////<IDEAS>
-// // // (Feel free to add to this field)
-//
-//
-// Post to Facebook function (can probably be done with PHP)
-// animation things (no idea where to start with this)
-// word count/char count?
-// Redirect to project wiki
-// HTML highlighting
-// 
-//  
-///////////////////////////////////////////////</IDEAS>
+int NumberInputReader(string); // Reads the numbers from user input
+void Help(); // Prints out a help menu
+void Markup(file&, int); // Does HTML highlighting
+void MarkupApply(file&, string, int); // Applies the HTML highlighting to the file
+void Substitute(file&, string); // substitutes portions of lines of text
+void Type(file&, int); // prints text to the screen
+void Copy(file, string[], int&); // copies text
+void Paste(file&, string[], int); // pastes text
+void Locate(file &, string); // finds text
+void Insert(file &, int); // inputs text to the array
+void Delete(file &, int); // deletes text
+void Replace(file &, int); // replaces while lines of text text
+void Move(file &, int); // moves the current line 
+void Quit(file); // quits the program, asks the users if they want to save. 
+void Open(file &); // allows the user to open a file
+void New(file &); // allows the user to create a file
+void Save(file); // saves the array to a file. 
+void IndexPrint(file); // for debugging, this prints the contents of the array. 
 
 int main() // Main program
 	{
@@ -64,26 +53,29 @@ int main() // Main program
 		char inputChar, openYNtemp;
 		
 		
-		cout<<"~~~\033[1;32m Welcome \033[0m~~~\n";
+		cout<<"~~~\033[1;32m Welcome \033[0m~~~\n"; // first use of colors in the program
+			// these colors are represented as '\033[1;32m' which initiates a certain color based
+			// on the value '32' in this case. The color reverts back to normal when 
+			// '\033[0m' is used. 
 		
 		cout<<"Would you like to open an existing file? "
 			<<endl;
 		getline(cin, openYN);
-		if(openYN == "")
-			{
+		if(openYN == "") // if the user simply presses enter, a new file is automatically created
+			{ // because if the user really did this, they were probably trolling. 
 				cout<<"\033[1;31m-You'll have to be more specific next time.-\033[0m "<<endl;
 				New(txtFile);
 			}
-		else
+		else // Wow, the user entered valid input. 
 			{
 				openYNtemp=openYN.at(0);
 				openYNtemp=toupper(openYNtemp);
 				switch(openYNtemp)
 					{
-						case 'Y':
+						case 'Y': 
 							Open(txtFile);
 							break;
-						default:
+						default: 
 							New(txtFile);
 							break;
 					}
@@ -131,11 +123,19 @@ int main() // Main program
 					case 'N':
 						New(txtFile);
 						break;
+					case '<': // Highlight
+						txtFile.markupHighlighting=true; // highlights the markup in the file '</>'
+						Markup(txtFile, inputValue);
+						break;
+					case '>': // Unhighlight 
+						txtFile.markupHighlighting=false; // if false, it'll go through the motions
+						Markup(txtFile, inputValue); // again, but revert to the original array
+						break; // afterward. 
 					case '*': // * saves file to disk
 						Save(txtFile);
 						break;
-					case 'H': 
-						Help();
+					case '?': 
+						Help(); // "I seem to be having difficulty with my lifestyle." -Arthur Dent
 						break;
 					case'.': // default for re-looping
 						break;
@@ -163,7 +163,13 @@ int main() // Main program
 				if(inputString == "")
 					{
 						cout<<"\033[1;31m-You'll have to be more specific.-\033[0m "<<endl;
-						inputChar='.';
+						inputChar='.'; // resets the loop because the user was being unfriendly
+					}
+				else if(inputString.length()>=19)
+					{
+						cout<<"\033[1;31m-That's a very long command, "
+							<<"I'm just but a humble Line Editor.-\033[0m "<<endl;
+						inputChar='.'; // resets the loop because the user was being unfriendly
 					}
 				else
 					{
@@ -244,21 +250,190 @@ void Help()
 			<<"...Copies the next # lines beginning with the current line. "<<endl
 			<<"\033[1;32mPaste\033[0m (Paste)"<<endl
 			<<"...Pastes whatever has been copied last. "<<endl
+			<<"\033[1;32m<Markup Highlighting\033[0m (<#)"<<endl
+			<<"...Highlights all markup </> in the document according"<<endl
+			<<"...to the color options, which are #0-7. "<<endl
+			<<"\033[1;32m>Markup Unhighlighting\033[0m (>)"<<endl
+			<<"...Unhighlights markup </>. "<<endl
 			<<"\033[1;32mQuit\033[0m (Quit)"<<endl
 			<<"...Exits the editor. "<<endl
 			<<"\033[1;32mOpen\033[0m (Open)"<<endl
 			<<"...Opens a new file. "<<endl
 			<<"\033[1;32mNew\033[0m (New)"<<endl
 			<<"...Creates a new file. "<<endl
-			<<"\033[1;32m*Save\033[0m (*)"<<endl
+			<<"\033[1;32m* Save\033[0m (*)"<<endl
 			<<"...Saves the current file to disk. "<<endl
-			<<"\033[1;32mHelp\033[0m (Help)"<<endl
+			<<"\033[1;32m? Help\033[0m (?)"<<endl
 			<<"...Prints the above help menu. "<<endl
-			<<endl;
+			<<endl
+			<<"\"I seem to be having tremendous difficulty with my lifestyle.\" -Arthur Dent "<<endl
+			<<"...Happy editing! "<<endl
+			<<endl; // UPDATE HELP MENU
 		
 	}
 	
-void Substitute(file &txtFile, string input_string)
+void Markup(file &txtFile, int inputColor) // Locates the markup and changes the color based on 
+	{ // user input. Then calls MarkupApply. 
+		int i, openFind, closeFind, len;
+		bool end;
+		string beginColor, endColor = "\033[0m";
+		string toBeReplaced, replacement, unhighlightedContents[MAX], finalString;
+		
+		fabs(inputColor);
+		
+		for(i=0; i<=txtFile.total-1; i++)
+					{
+						unhighlightedContents[i]=txtFile.contents[i];
+					}
+		
+		if(inputColor<=-1 or inputColor>=8)
+			{
+				inputColor=0; // Default color
+				cout<<"\033[1;31m-Invalid color. Color set to default.-\033[0m"<<endl;
+			}
+			
+		switch(inputColor)
+			{
+				case 0:
+					beginColor="\033[1;32m"; // colors two and zero are switched
+					break;
+				case 1:
+					beginColor="\033[1;31m";
+					break;
+				case 2:
+					beginColor="\033[1;30m"; // because if no colors are entered the 
+					break; // default should be color two
+				case 3:
+					beginColor="\033[1;33m";
+					break;
+				case 4:
+					beginColor="\033[1;34m";
+					break;
+				case 5:
+					beginColor="\033[1;35m";
+					break;
+				case 6:
+					beginColor="\033[1;36m";
+					break;
+				case 7:
+					beginColor="\033[1;37m";
+					break;
+				default:
+					cout<<"\033[1;31m-There seems to have been an error.-\033[0m"<<endl;
+					break;
+			}
+			
+		if(DEBUG)
+			{
+				cout<<beginColor<<"Test"<<endColor<<endl;
+			}
+		
+		// user input colors (0-7)
+		// firstPosition = inputString.find('/');
+		// secondPosition = tempOne.find('/');
+		// 
+		
+		i=0;
+		
+		while(i<=txtFile.total-1) // or reaches end, or none on the line
+			{
+				openFind=0;
+				closeFind=0;
+				while(openFind != -1)
+					{
+						openFind = txtFile.contents[i].find('<', closeFind);
+						closeFind = txtFile.contents[i].find('>', openFind)+1;
+						len=closeFind-openFind;
+						
+						if(openFind >= 0 and closeFind >= 0)
+							{
+								toBeReplaced = txtFile.contents[i].substr(openFind, closeFind);
+								/*cout<<toBeReplaced
+									<<" : ("<<openFind<<","<<closeFind<<")"<<endl;*/
+								replacement=beginColor+toBeReplaced+endColor;
+								
+								finalString="|"+toBeReplaced+"|"+replacement+"|";
+								//MarkupApply(txtFile, finalString, i);
+								txtFile.contents[i].replace(openFind, len, replacement);
+							}
+					}	
+				i++;
+			}
+		
+		if(txtFile.markupHighlighting=false)
+			{
+				for(i=0; i<=txtFile.total-1; i++)
+					{
+						txtFile.contents[i]=unhighlightedContents[i];
+					}
+			}
+		
+	}
+	
+void MarkupApply(file &txtFile, string input_string, int line) // Pretty much the same as Substitute
+	{ // this is only called by Makrup. 
+		int pos, pos_2, pos_3, pos_old_string, txtfile_length;
+		pos = input_string.find('|');
+		string temp_1, new_string, temp_2, old_string;
+		temp_1 = input_string.substr(pos + 1);
+		pos_2 = temp_1.find('|');
+		old_string = temp_1.substr(0,pos_2);
+			
+		temp_2 = temp_1.substr(pos_2+1);
+		new_string = temp_2.substr(0,temp_2.length()-1);
+			
+		int i_for_loop;
+		int new_string_length,old_string_length;
+		old_string_length = old_string.length();
+		new_string_length = new_string.length();
+		bool check, exit;
+		int start_from ;
+		i_for_loop = line;
+		start_from = 0;
+		check = true;
+		exit = false;
+		string the_original_string = txtFile.contents[i_for_loop];
+		if(txtFile.contents[i_for_loop].empty() == true)//to leave if it empty.
+			{
+				check = false;
+			}
+		txtfile_length = txtFile.contents[i_for_loop].length();
+			
+		while(check and not exit)
+			{
+				txtfile_length = txtFile.contents[i_for_loop].length();
+				
+			 	pos_old_string = txtFile.contents[i_for_loop].find(old_string,start_from);
+					//the position of the old_string in the string.
+				
+		 		if(pos_old_string == -1) 
+		 			{
+			 			exit=true;
+		 			}
+				else
+					{
+						if(new_string.empty())
+							{
+								txtFile.contents[i_for_loop].replace(pos_old_string,old_string_length,"");
+								start_from = 0;
+							}
+						else
+							{
+								txtFile.contents[i_for_loop].replace(pos_old_string,old_string_length,new_string);
+								if(txtFile.contents[i_for_loop].at(pos_old_string + new_string_length - 1) == '\0')
+									{
+										check = false;
+									}
+								else
+									{
+										start_from = pos_old_string + new_string_length;
+									}
+							}
+					}
+			}	
+	}
+
+void Substitute(file &txtFile, string input_string) // substitutes '/string/' with '/other string/'
 	{
 		int pos, pos_2, pos_3, pos_old_string, txtfile_length;
 		pos = input_string.find('/');
@@ -331,7 +506,7 @@ void Substitute(file &txtFile, string input_string)
 	}
 
 
-void Type(file &txtFile, int type_number) 
+void Type(file &txtFile, int type_number) // prints to the screen. 
 	{ 
 		int i;
 		int otherCounter=0;
@@ -362,7 +537,7 @@ void Type(file &txtFile, int type_number)
 		txtFile.currentLineIndex=i-1;
 	}
 
-void Copy(file txtFile, string copyQue[], int &copyNumber)
+void Copy(file txtFile, string copyQue[], int &copyNumber) // copies text
 	{
 		int i;
 		
@@ -385,7 +560,7 @@ void Copy(file txtFile, string copyQue[], int &copyNumber)
 			
 	}
 
-void Paste(file &txtFile, string copyQue[], int pasteNumber)
+void Paste(file &txtFile, string copyQue[], int pasteNumber) // pastes text
 	{
 		int i;
 		
@@ -408,7 +583,7 @@ void Paste(file &txtFile, string copyQue[], int pasteNumber)
 			}
 	}
 
-void Locate(file &txtFile, string inputString)
+void Locate(file &txtFile, string inputString) // finds text. 
 	{
 		int firstPosition, secondPosition, found, i=txtFile.currentLineIndex;
 		string tempOne, searchString;
@@ -439,7 +614,7 @@ void Locate(file &txtFile, string inputString)
 		
 	}
 
-void Insert(file &txtFile, int insert_number) 
+void Insert(file &txtFile, int insert_number) // inserts text
 	{ 
 		int i, reductionDifference=0;
 		bool reduction=false;
@@ -483,8 +658,8 @@ void Insert(file &txtFile, int insert_number)
 			
 	}
 
-void Delete(file &txtFile, int delete_number)
-	{
+void Delete(file &txtFile, int delete_number) // deletes text and moves 
+	{ // the other text to the top of the array
 		int i;
 		
 		delete_number=fabs(delete_number);
@@ -514,7 +689,7 @@ void Delete(file &txtFile, int delete_number)
 			}
 	}
 
-void Replace(file &txtFile, int replace_number)
+void Replace(file &txtFile, int replace_number) // replaces text
 	{
 		int i;
 		bool reduced;
@@ -557,7 +732,7 @@ void Replace(file &txtFile, int replace_number)
 		
 	}
 
-void Move(file &txtFile, int move_number) 
+void Move(file &txtFile, int move_number) // moves text
 	{
 		if(txtFile.currentLineIndex + move_number <= -1)
 			{
@@ -621,12 +796,12 @@ void Quit(file txtFile)  // Quit function uses recusion to make sure the user do
 			}
 	}
 
-void Open(file &txtFile)
+void Open(file &txtFile) // opens a file
 	{
 		int i;
 		
 		cout<<"Please enter the name of the file which you would like to open. "
-			<<endl;
+			<<endl<<"> ";
 		getline(cin, txtFile.fileName);
 		ifstream fin;
 		fin.open(txtFile.fileName.c_str());
@@ -656,7 +831,7 @@ void Open(file &txtFile)
 			}
 	}
 	
-void New(file &txtFile)
+void New(file &txtFile) // makes a new file
 	{
 		int i;
 		for(i=0; i<=txtFile.total-1; i++)
