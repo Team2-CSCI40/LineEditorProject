@@ -31,7 +31,7 @@ void MarkupApply(file&, string, int); // Applies the HTML highlighting to the fi
 void Substitute(file&, string); // substitutes portions of lines of text
 void Type(file&, int); // prints text to the screen
 void Copy(file, string[], int&); // copies text
-void Paste(file&, string[], int); // pastes text
+void Paste(file&, string[], int, int); // pastes text
 void Locate(file &, string); // finds text
 void Insert(file &, int); // inputs text to the array
 void Delete(file &, int); // deletes text
@@ -51,6 +51,8 @@ int main() // Main program
 		int inputValue=0, copyNumber;
 		string inputString, openYN, copyQue[MAX];
 		char inputChar, openYNtemp;
+		
+		// ANIMATION LOOP GOES HERE
 		
 		
 		cout<<"~~~\033[1;32m Welcome \033[0m~~~\n"; // first use of colors in the program
@@ -100,7 +102,7 @@ int main() // Main program
 						Copy(txtFile, copyQue, copyNumber);	
 						break;
 					case 'P':
-						Paste(txtFile, copyQue, copyNumber);
+						Paste(txtFile, copyQue, copyNumber, inputValue);
 						break;
 					case 'L':
 						Locate(txtFile, inputString);
@@ -143,7 +145,7 @@ int main() // Main program
 						cout<<"\033[1;31m'"<<inputString<<"'\033[0m"
 							<<" is not a valid command. "
 							<<endl
-							<<"Enter 'Help' for a list of valid commands. "
+							<<"Enter '?' for a list of valid commands. "
 							<<endl;
 						break;	
 				}
@@ -165,8 +167,8 @@ int main() // Main program
 						cout<<"\033[1;31m-You'll have to be more specific.-\033[0m "<<endl;
 						inputChar='.'; // resets the loop because the user was being unfriendly
 					}
-				else if(inputString.length()>=19)
-					{
+				else if(inputString.length()>=80) // If it takes up the entire default width of
+					{ // the window. 
 						cout<<"\033[1;31m-That's a very long command, "
 							<<"I'm just but a humble Line Editor.-\033[0m "<<endl;
 						inputChar='.'; // resets the loop because the user was being unfriendly
@@ -243,9 +245,11 @@ void Help()
 			<<"...Deletes the next # lines beginning with the current line. "<<endl
 			<<"\033[1;32mLocate\033[0m (Locate /text/)"<<endl
 			<<"...Locates the next occurrence of /text/. "<<endl
+			<<"...You are not limited to using '/' to indicate text. "<<endl
 			<<"\033[1;32mSubstitute\033[0m (Substitute /Original text/Substituted text/)"<<endl
 			<<"...Substitutes the all occurrences of /Original text/ "<<endl
 			<<"...with /Substituted text/ in the current line. "<<endl
+			<<"...You are not limited to using '/' to separate text. "<<endl
 			<<"\033[1;32mCopy\033[0m (Copy #)"<<endl
 			<<"...Copies the next # lines beginning with the current line. "<<endl
 			<<"\033[1;32mPaste\033[0m (Paste)"<<endl
@@ -267,7 +271,6 @@ void Help()
 			<<"...Prints the above help menu. "<<endl
 			<<endl
 			<<"\"I seem to be having tremendous difficulty with my lifestyle.\" -Arthur Dent "<<endl
-			<<"...Happy editing! "<<endl
 			<<endl; // UPDATE HELP MENU
 		
 	}
@@ -275,16 +278,11 @@ void Help()
 void Markup(file &txtFile, int inputColor) // Locates the markup and changes the color based on 
 	{ // user input. Then calls MarkupApply. 
 		int i, openFind, closeFind, len;
-		bool end;
+		bool end = false;
 		string beginColor, endColor = "\033[0m";
-		string toBeReplaced, replacement, unhighlightedContents[MAX], finalString;
+		string toBeReplaced, replacement, finalString;
 		
 		fabs(inputColor);
-		
-		for(i=0; i<=txtFile.total-1; i++)
-					{
-						unhighlightedContents[i]=txtFile.contents[i];
-					}
 		
 		if(inputColor<=-1 or inputColor>=8)
 			{
@@ -322,24 +320,14 @@ void Markup(file &txtFile, int inputColor) // Locates the markup and changes the
 					cout<<"\033[1;31m-There seems to have been an error.-\033[0m"<<endl;
 					break;
 			}
-			
-		if(DEBUG)
-			{
-				cout<<beginColor<<"Test"<<endColor<<endl;
-			}
-		
-		// user input colors (0-7)
-		// firstPosition = inputString.find('/');
-		// secondPosition = tempOne.find('/');
-		// 
 		
 		i=0;
-		
 		while(i<=txtFile.total-1) // or reaches end, or none on the line
 			{
+				end = false;
 				openFind=0;
 				closeFind=0;
-				while(openFind != -1)
+				while(end != true)
 					{
 						openFind = txtFile.contents[i].find('<', closeFind);
 						closeFind = txtFile.contents[i].find('>', openFind)+1;
@@ -348,131 +336,69 @@ void Markup(file &txtFile, int inputColor) // Locates the markup and changes the
 						if(openFind >= 0 and closeFind >= 0)
 							{
 								toBeReplaced = txtFile.contents[i].substr(openFind, closeFind);
-								/*cout<<toBeReplaced
-									<<" : ("<<openFind<<","<<closeFind<<")"<<endl;*/
 								replacement=beginColor+toBeReplaced+endColor;
 								
-								finalString="|"+toBeReplaced+"|"+replacement+"|";
+								//finalString="|"+toBeReplaced+"|"+replacement+"|";
 								//MarkupApply(txtFile, finalString, i);
 								txtFile.contents[i].replace(openFind, len, replacement);
 							}
+						end = true;
 					}	
 				i++;
 			}
 		
-		if(txtFile.markupHighlighting=false)
+		if(txtFile.markupHighlighting = false)
 			{
-				for(i=0; i<=txtFile.total-1; i++)
-					{
-						txtFile.contents[i]=unhighlightedContents[i];
-					}
+				// UNHIGHLIGHTING GOES HERE 
+				
 			}
 		
 	}
 	
-void MarkupApply(file &txtFile, string input_string, int line) // Pretty much the same as Substitute
-	{ // this is only called by Makrup. 
-		int pos, pos_2, pos_3, pos_old_string, txtfile_length;
-		pos = input_string.find('|');
-		string temp_1, new_string, temp_2, old_string;
-		temp_1 = input_string.substr(pos + 1);
-		pos_2 = temp_1.find('|');
-		old_string = temp_1.substr(0,pos_2);
-			
-		temp_2 = temp_1.substr(pos_2+1);
-		new_string = temp_2.substr(0,temp_2.length()-1);
-			
-		int i_for_loop;
-		int new_string_length,old_string_length;
-		old_string_length = old_string.length();
-		new_string_length = new_string.length();
-		bool check, exit;
-		int start_from ;
-		i_for_loop = line;
-		start_from = 0;
-		check = true;
-		exit = false;
-		string the_original_string = txtFile.contents[i_for_loop];
-		if(txtFile.contents[i_for_loop].empty() == true)//to leave if it empty.
-			{
-				check = false;
-			}
-		txtfile_length = txtFile.contents[i_for_loop].length();
-			
-		while(check and not exit)
-			{
-				txtfile_length = txtFile.contents[i_for_loop].length();
-				
-			 	pos_old_string = txtFile.contents[i_for_loop].find(old_string,start_from);
-					//the position of the old_string in the string.
-				
-		 		if(pos_old_string == -1) 
-		 			{
-			 			exit=true;
-		 			}
-				else
-					{
-						if(new_string.empty())
-							{
-								txtFile.contents[i_for_loop].replace(pos_old_string,old_string_length,"");
-								start_from = 0;
-							}
-						else
-							{
-								txtFile.contents[i_for_loop].replace(pos_old_string,old_string_length,new_string);
-								if(txtFile.contents[i_for_loop].at(pos_old_string + new_string_length - 1) == '\0')
-									{
-										check = false;
-									}
-								else
-									{
-										start_from = pos_old_string + new_string_length;
-									}
-							}
-					}
-			}	
-	}
-
 void Substitute(file &txtFile, string input_string) // substitutes '/string/' with '/other string/'
 	{
-		int pos, pos_2, pos_3, pos_old_string, txtfile_length;
-		pos = input_string.find('/');
+		int pos, pos_2, pos_3, pos_old_string, txtfile_length, i; 
+		int new_string_length, old_string_length, start_from;
+		bool check, exit;
+		char indicator;
+		// Substitute works with all characters, not just '/'
+		indicator = input_string.at(input_string.length()-1); 
+		
+		pos = input_string.find(indicator);////////////////////////
 		string temp_1, new_string, temp_2, old_string;
 		temp_1 = input_string.substr(pos + 1);
-		pos_2 = temp_1.find('/');
+		pos_2 = temp_1.find_last_of(indicator);////////////////////////////
 		old_string = temp_1.substr(0,pos_2);
 			
 		temp_2 = temp_1.substr(pos_2+1);
 		new_string = temp_2.substr(0,temp_2.length()-1);
 			
-		int i_for_loop;
-		int new_string_length,old_string_length;
+		
 		old_string_length = old_string.length();
 		new_string_length = new_string.length();
-		bool check, exit;
-		int start_from ;
-		i_for_loop = txtFile.currentLineIndex;
+		
+		i = txtFile.currentLineIndex;
 		start_from = 0;
 		check = true;
 		exit = false;
-		string the_original_string = txtFile.contents[i_for_loop];
-		if(txtFile.contents[i_for_loop].find(old_string) == -1)//to show if no match string for the old_string.
+		string the_original_string = txtFile.contents[i];
+		if(txtFile.contents[i].find(old_string) == -1)//to show if no match string for the old_string.
 			{
 				cout<<"\033[1;31m-'"<<old_string<<"'\033[0m does not occur on line \033[1;31m"
-					<<i_for_loop<<"\033[0m.- "<<endl;
+					<<i<<"\033[0m.- "<<endl;
 			}
-		if(txtFile.contents[i_for_loop].empty() == true)//to leave if it empty.
+		if(txtFile.contents[i].empty() == true)//to leave if it empty.
 			{
-				cout<<"\033[1;31m-Line number "<<i_for_loop+1<<" is empty.-\033[0m"<<endl;
+				cout<<"\033[1;31m-Line number "<<i+1<<" is empty.-\033[0m"<<endl;
 				check = false;
 			}
-		txtfile_length = txtFile.contents[i_for_loop].length();
+		txtfile_length = txtFile.contents[i].length();
 			
 		while(check and not exit)
 			{
-				txtfile_length = txtFile.contents[i_for_loop].length();
+				txtfile_length = txtFile.contents[i].length();
 				
-			 	pos_old_string = txtFile.contents[i_for_loop].find(old_string,start_from);
+			 	pos_old_string = txtFile.contents[i].find(old_string,start_from);
 					//the position of the old_string in the string.
 				
 		 		if(pos_old_string == -1) 
@@ -483,13 +409,13 @@ void Substitute(file &txtFile, string input_string) // substitutes '/string/' wi
 					{
 						if(new_string.empty())
 							{
-								txtFile.contents[i_for_loop].replace(pos_old_string,old_string_length,"");
+								txtFile.contents[i].replace(pos_old_string,old_string_length,"");
 								start_from = 0;
 							}
 						else
 							{
-								txtFile.contents[i_for_loop].replace(pos_old_string,old_string_length,new_string);
-								if(txtFile.contents[i_for_loop].at(pos_old_string + new_string_length - 1) == '\0')
+								txtFile.contents[i].replace(pos_old_string,old_string_length,new_string);
+								if(txtFile.contents[i].at(pos_old_string + new_string_length - 1) == '\0')
 									{
 										check = false;
 									}
@@ -500,9 +426,9 @@ void Substitute(file &txtFile, string input_string) // substitutes '/string/' wi
 							}
 					}
 			}			
-		if(txtFile.contents[i_for_loop] != the_original_string)
+		if(txtFile.contents[i] != the_original_string)
 			cout<<"Text from current line: "<<endl
-				<<"\033[1;36m>\033[0m "<<txtFile.contents[i_for_loop]<<endl;	
+				<<"\033[1;36m>\033[0m "<<txtFile.contents[i]<<endl;	
 	}
 
 
@@ -513,6 +439,11 @@ void Type(file &txtFile, int type_number) // prints to the screen.
 		bool exit=false;
 		
 		type_number=fabs(type_number);
+		
+		if(type_number==0)
+			{
+				type_number = 1;
+			}
 		
 		if(txtFile.currentLineIndex<=0)
 			{
@@ -543,6 +474,11 @@ void Copy(file txtFile, string copyQue[], int &copyNumber) // copies text
 		
 		copyNumber=fabs(copyNumber);
 		
+		if(copyNumber==0)
+			{
+				copyNumber = 1;
+			}
+		
 		while(copyNumber+txtFile.currentLineIndex-1>=txtFile.total)
 			{
 				copyNumber--;
@@ -560,37 +496,44 @@ void Copy(file txtFile, string copyQue[], int &copyNumber) // copies text
 			
 	}
 
-void Paste(file &txtFile, string copyQue[], int pasteNumber) // pastes text
+void Paste(file &txtFile, string copyQue[], int copyNumber, int pasteNumber) // pastes text
 	{
-		int i;
-		
-		if(pasteNumber+txtFile.total-1>=MAX)
+		int i, ii;
+		for(ii=0; ii<=pasteNumber-1; ii++)
 			{
-				cout<<"\033[1;31m-You cannot exceed the total number of lines.- \033[0m"<<endl;
-			}
-		else
-			{
-				for(i=txtFile.total-1; i>=txtFile.currentLineIndex+1; i--)
+				if(copyNumber+txtFile.total-1>=MAX)
 					{
-						txtFile.contents[i+pasteNumber]=txtFile.contents[i];
-					} 
-				for(i=txtFile.currentLineIndex+1; i<=txtFile.currentLineIndex+pasteNumber; i++)
-					{
-						txtFile.contents[i]=copyQue[i-txtFile.currentLineIndex-1];
+						cout<<"\033[1;31m-You cannot exceed the total number of lines.- \033[0m"<<endl;
 					}
-				txtFile.total=txtFile.total+pasteNumber;
-				txtFile.currentLineIndex=i-1;
+				else
+					{
+						for(i=txtFile.total-1; i>=txtFile.currentLineIndex+1; i--)
+							{
+								txtFile.contents[i+copyNumber]=txtFile.contents[i];
+							} 
+						for(i=txtFile.currentLineIndex+1; i<=txtFile.currentLineIndex+copyNumber; i++)
+							{
+								txtFile.contents[i]=copyQue[i-txtFile.currentLineIndex-1];
+							}
+						txtFile.total=txtFile.total+copyNumber;
+						txtFile.currentLineIndex=i-1;
+					}
 			}
 	}
 
 void Locate(file &txtFile, string inputString) // finds text. 
 	{
+		
 		int firstPosition, secondPosition, found, i=txtFile.currentLineIndex;
+		char indicator;
+		// Locate works with all characters, not just '/'
+		indicator = inputString.at(inputString.length()-1); 
+		
 		string tempOne, searchString;
 		
-		firstPosition = inputString.find('/');
+		firstPosition = inputString.find(indicator);
 		tempOne = inputString.substr(firstPosition + 1);
-		secondPosition = tempOne.find('/');
+		secondPosition = tempOne.find(indicator);
 		
 		searchString = tempOne.substr(0, secondPosition);
 	
@@ -620,6 +563,11 @@ void Insert(file &txtFile, int insert_number) // inserts text
 		bool reduction=false;
 		
 		insert_number=fabs(insert_number);
+		
+		if(insert_number==0)
+			{
+				insert_number=1;
+			}
 		
 		if(txtFile.total==0 and txtFile.currentLineIndex<=0)
 			{
@@ -695,6 +643,11 @@ void Replace(file &txtFile, int replace_number) // replaces text
 		bool reduced;
 		
 		replace_number=fabs(replace_number);
+		
+		if(replace_number==0)
+			{
+				replace_number=1;
+			}
 		
 		if(txtFile.currentLineIndex==-1)
 			{
@@ -801,7 +754,7 @@ void Open(file &txtFile) // opens a file
 		int i;
 		
 		cout<<"Please enter the name of the file which you would like to open. "
-			<<endl<<"> ";
+			<<endl<<"\033[1;36m>\033[0m ";
 		getline(cin, txtFile.fileName);
 		ifstream fin;
 		fin.open(txtFile.fileName.c_str());
